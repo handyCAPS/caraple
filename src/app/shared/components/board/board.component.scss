@@ -1,0 +1,98 @@
+$boardDim: 23rem;
+$boardGap: 0.25em;
+
+.board {
+  height: $boardDim;
+  width: $boardDim * 0.8;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: $boardGap;
+  font-size: 2em;
+  text-transform: uppercase;
+
+  &.invalid {
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.07), 0 0 24px rgba(255, 0, 0, 0.17);
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: $boardGap;
+}
+
+.letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  pointer-events: none;
+  background-color: #F2F2F2;
+  font-weight: 700;
+
+  .current & {
+    background-color: #fff;
+  }
+
+  .checked & {
+    color: #FFF;
+  }
+
+  &.guessed {
+    background-color: rgba(0, 0, 0, 0.47);
+
+    &.correct-letter {
+      background-color: var(--yellow);
+    }
+
+    &.correct-space {
+      background-color: var(--green);
+    }
+  }
+
+  &.filled {
+    border-width: 3px;
+  }
+
+}
+
+.submit {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+  margin-top: 1.618em;
+}
+
+.button {
+  border: none;
+  padding: 1em 1.618em;
+  color: #FFF;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.button-submit {
+  background-color: #BE1818;
+  grid-column-start: 2;
+}
+
+.word {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5em;
+}
+
+.used-letters {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.12em;
+}
+
+.used-letter {
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

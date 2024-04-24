@@ -1,0 +1,9 @@
+<div class="home-page">
+  <h1 class="title">CARAPLE</h1>
+  <main class="board">
+    <app-board [keyStroke]="keyStroke"></app-board>
+  </main>
+  <div class="keyboard">
+    <app-keyboard (keyStroke)="keyStroke = $event"></app-keyboard>
+  </div>
+</div>

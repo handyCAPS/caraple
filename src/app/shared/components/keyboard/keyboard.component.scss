@@ -1,0 +1,59 @@
+$keygap: 0.33rem;
+$keyHeight: 3.25rem;
+$keyWidth: 3.25rem;
+$keyColor: #111;
+
+.keyboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: $keygap;
+}
+
+.row {
+  display: flex;
+  gap: $keygap;
+}
+
+.key {
+  color: $keyColor;
+  font-size: 1.4em;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $keyWidth;
+  height: $keyHeight;
+  background-color: #D3D6DA;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.key-function {
+  width: calc(($keyWidth * 1.5) + ($keygap / 2));
+  font-size: 1.1em;
+}
+
+.backspace {
+  color: transparent;
+  position: relative;
+
+  &::after {
+    content: 'X';
+    position: absolute;
+    height: 60%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: $keyColor;
+    border: 3px solid black;
+  }
+}

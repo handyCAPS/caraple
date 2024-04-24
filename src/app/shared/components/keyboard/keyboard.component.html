@@ -1,0 +1,48 @@
+<div data-testid="keyboard" class="keyboard">
+  @for (row of keys; track $index) {
+  <!--ROW-->
+  <div data-testid="keyboard-row" class="row">
+    @for (key of row; track $index) {
+    <!--FOR-->
+    @if (key.length === 1) {
+    <!-- IF -->
+    <div
+      data-testid="key"
+      class="key key-{{ key }}"
+      (click)="keyStroke.emit(key)"
+    >
+      {{ key }}
+    </div>
+    <!-- IF -->
+    } @else {
+    <!--ELSE-->
+    @if (key === 'Enter') {
+    <!-- IF -->
+    <div
+      data-testid="key-enter"
+      class="key key-function enter"
+      (click)="enter.emit(); keyStroke.emit(key)"
+    >
+      {{ key }}
+    </div>
+    }
+    <!-- IF -->
+    @if (key === 'Backspace') {
+    <!-- DELETE -->
+    <div
+      data-testid="key-backspace"
+      class="key key-function backspace"
+      (click)="backspace.emit(); keyStroke.emit(key)"
+    >
+      {{ key }}
+    </div>
+    <!-- /DELETE -->
+    }
+    <!-- /IF -->
+    }
+    <!--/FOR-->
+    }
+  </div>
+  <!--/ROW-->
+  }
+</div>
