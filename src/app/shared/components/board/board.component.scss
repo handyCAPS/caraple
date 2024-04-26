@@ -1,12 +1,11 @@
 $boardDim: 23rem;
-$boardGap: 0.25em;
 
 .board {
   height: $boardDim;
   width: $boardDim * 0.8;
   display: grid;
   grid-template-rows: repeat(6, 1fr);
-  gap: $boardGap;
+  gap: var(--board-gap);
   font-size: 2em;
   text-transform: uppercase;
 
@@ -18,14 +17,14 @@ $boardGap: 0.25em;
 .row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: $boardGap;
+  gap: var(--board-gap);
 }
 
 .letter {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid black;
+  border: 1px solid var(--lightgrey);
   pointer-events: none;
   background-color: #F2F2F2;
   font-weight: 700;

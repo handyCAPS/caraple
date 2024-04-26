@@ -47,9 +47,3 @@
 } @if (guessedCorrect || failedAll) {
 <div class="word">{{ wordToGuess }}</div>
 }
-
-<div class="used-letters" data-testid="used-letters">
-  @for (letter of usedLetters | unique ; track $index) {
-  <div class="used-letter" data-testid="used-letter">{{ letter }}</div>
-  }
-</div>

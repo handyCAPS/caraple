@@ -1,14 +1,13 @@
-import { KeyboardComponent } from './keyboard.component';
+import { IKeyUseMap, KeyboardComponent } from './keyboard.component';
 import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
 import { testId } from '../../../testing/helpers';
 import { KbKey } from '../board/KbKey';
+import { KeyboardService } from '../../services/keyboard.service';
 
 describe('KeyboardComponent', () => {
   beforeEach(() => {
-    return MockBuilder(KeyboardComponent);
+    return MockBuilder(KeyboardComponent).keep(KeyboardService);
   });
-
-  beforeEach(async () => {});
 
   describe('Keyboard', () => {
     it('should create', () => {
@@ -40,11 +39,11 @@ describe('KeyboardComponent', () => {
     it('emit key when pressed', () => {
       const fixture = MockRender(KeyboardComponent);
       const component = fixture.point.componentInstance;
-      const aKey = ngMocks.find('.key-a');
+      const aKey = ngMocks.find(fixture, dataKey('a'));
       spyOn(component.keyStroke, 'emit');
       ngMocks.click(aKey);
       expect(component.keyStroke.emit).toHaveBeenCalledWith('a');
-      const zKey = ngMocks.find('.key-z');
+      const zKey = ngMocks.find(fixture, dataKey('z'));
       ngMocks.click(zKey);
       expect(component.keyStroke.emit).toHaveBeenCalledWith('z');
     });
@@ -71,4 +70,24 @@ describe('KeyboardComponent', () => {
       expect(component.keyStroke.emit).toHaveBeenCalledWith(KbKey.backspace);
     });
   });
+
+  describe('Keystroke service', () => {
+    it('sets guessed keys', () => {
+      const fixture = MockRender(KeyboardComponent);
+      const component = fixture.point.componentInstance;
+      const service = ngMocks.findInstance(KeyboardService);
+      const testMap: IKeyUseMap = {
+        a: true,
+        b: false
+      };
+      service.setGuessMap(testMap);
+      fixture.detectChanges();
+      expect(component.keyGuesses['a']).toBeTrue();
+      expect(component.keyGuesses['b']).toBeFalse();
+    });
+  });
 });
+
+function dataKey(key: string): string {
+  return `[data-key="${key}"]`;
+}

@@ -1,6 +1,6 @@
 $keygap: 0.33rem;
 $keyHeight: 3.25rem;
-$keyWidth: 3.25rem;
+$keyWidth: 2.861rem;
 $keyColor: #111;
 
 .keyboard {
@@ -15,6 +15,7 @@ $keyColor: #111;
 .row {
   display: flex;
   gap: $keygap;
+  user-select: none;
 }
 
 .key {
@@ -27,14 +28,23 @@ $keyColor: #111;
   align-items: center;
   width: $keyWidth;
   height: $keyHeight;
-  background-color: #D3D6DA;
+  background-color: var(--lightgrey);
   border-radius: 3px;
   cursor: pointer;
+
+  &.guessed {
+    background-color: var(--darkgrey);
+    color: #FFF;
+  }
+
+  &.correct {
+    background-color: var(--green);
+  }
 }
 
 .key-function {
   width: calc(($keyWidth * 1.5) + ($keygap / 2));
-  font-size: 1.1em;
+  font-size: 0.9em;
 }
 
 .backspace {
@@ -42,18 +52,18 @@ $keyColor: #111;
   position: relative;
 
   &::after {
-    content: 'X';
+    content: '\279F';
     position: absolute;
     height: 60%;
     width: 60%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.9em;
+    font-size: 2.2em;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: rotate(180deg) translate(-50%, -50%);
+    transform-origin: left top;
     color: $keyColor;
-    border: 3px solid black;
   }
 }

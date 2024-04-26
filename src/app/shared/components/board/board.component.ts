@@ -1,6 +1,8 @@
 import { Component, HostListener, effect, input } from '@angular/core';
 import { WordService } from '../../services/word.service';
 import { KbKey } from './KbKey';
+import { KeyboardService } from '../../services/keyboard.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface ILetter {
   id: string;
@@ -12,6 +14,13 @@ export interface ILetter {
 export interface IRow {
   id: string;
   letters: ILetter[];
+  guessed?: boolean;
+  correctWord?: boolean;
+}
+
+export interface IBoardRow {
+  index: number;
+  active: boolean;
   guessed?: boolean;
   correctWord?: boolean;
 }
@@ -60,13 +69,29 @@ export class BoardComponent {
 
   public usedLetters: string[] = [];
 
-  constructor(private readonly wordService: WordService) {
+  public boardRows: IBoardRow[] = [
+    {
+      active: true,
+      index: 0,
+    },
+  ];
+
+  constructor(
+    private readonly wordService: WordService,
+    private readonly keyboardService: KeyboardService
+  ) {
     this.initAll();
-    effect(() => {
-      if (this.keyStroke()) {
-        this.handleKeystroke(this.keyStroke()!);
-      }
-    });
+    // effect(() => {
+    //   if (this.keyStroke()) {
+    //     this.handleKeystroke(this.keyStroke()!);
+    //   }
+    // });
+    this.keyboardService
+      .keyStrokes()
+      .pipe(takeUntilDestroyed())
+      .subscribe((key) => {
+        this.handleKeyDown(key);
+      });
   }
 
   public reset() {
@@ -106,6 +131,7 @@ export class BoardComponent {
 
   public initAll(): void {
     this.rows = this.wordService.getRows(this.rowCount, this.letterCount);
+    this.boardRows = this.getBoardRows(this.rowCount);
     this.currentLetterIndex = 0;
     this.currentRowIndex = 0;
     this.guessedCorrect = false;
@@ -216,5 +242,12 @@ export class BoardComponent {
         .map((l) => l.letter)
         .filter((l) => l !== '').length === this.letterCount
     );
+  }
+
+  private getBoardRows(count: number): IBoardRow[] {
+    return [...new Array(count)].map((n, index) => ({
+      active: false,
+      index,
+    }));
   }
 }

@@ -22,11 +22,11 @@ export function getMockRow(word: string): IRow {
   return {
     id: 'testid',
     letters: [
-      mockLetter('1', word[0]),
-      mockLetter('2', word[1]),
-      mockLetter('3', word[2]),
-      mockLetter('4', word[3]),
-      mockLetter('5', word[4]),
+      mockLetter('1', word[0] || ''),
+      mockLetter('2', word[1] || ''),
+      mockLetter('3', word[2] || ''),
+      mockLetter('4', word[3] || ''),
+      mockLetter('5', word[4] || ''),
     ],
   }
 }

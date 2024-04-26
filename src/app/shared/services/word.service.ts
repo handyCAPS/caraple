@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ILetter, IRow } from '../components/board/board.component';
 import { words } from '../../lists/en/words';
+import {
+  IGuessedKey,
+  IKeyUseMap,
+} from '../components/keyboard/keyboard.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WordService {
+  private wordLength = 5;
   private words: string[] = words;
 
   private wordToGuess: string = '';
@@ -14,10 +19,14 @@ export class WordService {
     this.wordToGuess = this.getRandomWord();
   }
 
+  public getWordLength(): number {
+    return this.wordLength;
+  }
+
   public getRows(rowCount: number, letterCount: number): IRow[] {
     return [...new Array(rowCount)].map((row, rowIndex) => {
       const letterArray = [...new Array(letterCount)].map(
-        (letter, letterIndex) => this.getLetter(rowIndex, letterIndex)
+        (letter, letterIndex) => this.getLetter(letterIndex)
       );
 
       return {
@@ -27,16 +36,21 @@ export class WordService {
     });
   }
 
-  public getLetter(rowCount: number, letterCount: number): ILetter {
+  public getLetter(letterCount: number): ILetter {
     return {
-      id: `letter-${rowCount}-${letterCount}`,
+      id: `letter-${letterCount}`,
       letter: '',
       correctLetter: false,
       correctSpace: false,
     };
   }
 
+  public getLetters(): ILetter[] {
+    return [...new Array(this.wordLength)].map((_, i) => this.getLetter(i));
+  }
+
   public getWord(): string {
+    console.log('this.wordToGuess', this.wordToGuess);
     return this.wordToGuess;
   }
 
@@ -71,7 +85,10 @@ export class WordService {
 
   public removeLastLetter(row: IRow): IRow {
     let removeIndex =
-      row.letters.map((letter) => letter.letter).join('').length - 1;
+      row.letters
+        .map((letter) => letter.letter)
+        .join('')
+        .trim().length - 1;
     return {
       ...row,
       letters: row.letters.map((letter, index) => {
@@ -81,5 +98,31 @@ export class WordService {
         return letter;
       }),
     };
+  }
+
+  public addLetterToRow(row: IRow, letter: string): IRow {
+    let setOne = false;
+    return {
+      ...row,
+      letters: row.letters.map((l) => {
+        if (setOne || /[a-z]/i.test(l.letter)) {
+          return l;
+        }
+        setOne = true;
+        return {
+          ...l,
+          letter,
+        };
+      }),
+    };
+  }
+
+  public rowToGuessMap(row: IRow): IKeyUseMap {
+    return row.letters.reduce((prev, curr) => {
+      return {
+        ...prev,
+        [curr.letter.toLowerCase()]: !!curr.correctLetter,
+      };
+    }, {});
   }
 }

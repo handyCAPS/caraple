@@ -8,35 +8,40 @@
     <!-- IF -->
     <div
       data-testid="key"
+      [attr.data-key]="key"
       class="key key-{{ key }}"
-      (click)="keyStroke.emit(key)"
+      [ngClass]="{
+        guessed: keyGuesses[key] !== undefined,
+        correct: keyGuesses[key] === true,
+      }"
+      (click)="stroke(key)"
     >
       {{ key }}
     </div>
     <!-- IF -->
     } @else {
     <!--ELSE-->
-    @if (key === 'Enter') {
+    @if (key === keyBoardKey.enter) {
     <!-- IF -->
     <div
       data-testid="key-enter"
       class="key key-function enter"
-      (click)="enter.emit(); keyStroke.emit(key)"
+      (click)="stroke(key)"
     >
       {{ key }}
     </div>
     }
+    <!-- /IF -->
+    @if (key === keyBoardKey.backspace) {
     <!-- IF -->
-    @if (key === 'Backspace') {
-    <!-- DELETE -->
     <div
       data-testid="key-backspace"
       class="key key-function backspace"
-      (click)="backspace.emit(); keyStroke.emit(key)"
+      (click)="stroke(key)"
     >
       {{ key }}
     </div>
-    <!-- /DELETE -->
+    <!-- /IF -->
     }
     <!-- /IF -->
     }

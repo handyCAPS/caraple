@@ -2,6 +2,10 @@ import { TestBed } from '@angular/core/testing';
 
 import { WordService } from './word.service';
 import { getMockRow } from '../../testing/mock-data/mock-row';
+import {
+  IGuessedKey,
+  IKeyUseMap,
+} from '../components/keyboard/keyboard.component';
 
 describe('WordService', () => {
   let service: WordService;
@@ -69,5 +73,41 @@ describe('WordService', () => {
     expect(secondRemoval.letters[3].letter)
       .withContext('Failed second delete')
       .toBe('');
+  });
+
+  it('adds a letter to the row', () => {
+    const testRow = getMockRow('REHA');
+    const result = service.addLetterToRow(testRow, 'B');
+    const fullWord = result.letters.map((letter) => letter.letter).join('');
+    expect(fullWord).withContext('4 letters').toBe('REHAB');
+    const emptyTestRow = getMockRow('');
+    const resultEmpty = service.addLetterToRow(emptyTestRow, 'B');
+    const fullWordEmpty = resultEmpty.letters
+      .map((letter) => letter.letter)
+      .join('');
+    expect(fullWordEmpty).withContext('Empty').toBe('B');
+  });
+
+  it('Ignores empty spaces when deleting', () => {
+    const testRow = getMockRow('REHA ');
+    const result = service.removeLastLetter(testRow);
+    expect(result.letters[3].letter).toBe('');
+  });
+
+  it('translates row to guesses', () => {
+    const mockRow = getMockRow('REHAB');
+    mockRow.letters[0].correctLetter = true;
+    mockRow.letters[1].correctLetter = true;
+    mockRow.letters[4].correctLetter = true;
+    mockRow.letters[4].correctSpace = true;
+    const expected: IKeyUseMap = {
+      r: true,
+      e: true,
+      h: false,
+      a: false,
+      b: true,
+    };
+    const actual = service.rowToGuessMap(mockRow);
+    expect(actual).toEqual(expected);
   });
 });

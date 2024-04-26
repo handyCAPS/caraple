@@ -1,0 +1,21 @@
+<div
+    class="board-row"
+    data-testid="row"
+    [ngClass]="{ current: isCurrent(), checked: isChecked() }"
+  >
+    @for (letter of row.letters; track letter.id) {
+    <div
+      class="letter"
+      [ngClass]="{
+        filled: letter.letter.length > 0,
+        guessed: isGuessed(),
+        'correct-letter': letter.correctLetter,
+        'correct-space': letter.correctSpace,
+      }"
+      role="img"
+      data-testid="letter"
+    >
+      {{ letter.letter }}
+    </div>
+    }
+  </div>

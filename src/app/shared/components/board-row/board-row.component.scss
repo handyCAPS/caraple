@@ -1,0 +1,45 @@
+$keygap: 0.33rem;
+$keyHeight: 3.25rem;
+$keyWidth: 3.25rem;
+$keyColor: #111;
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--board-gap);
+}
+
+.letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--lightgrey);
+  pointer-events: none;
+  background-color: #F2F2F2;
+  font-weight: 700;
+
+  .current & {
+    background-color: #fff;
+  }
+
+  .checked & {
+    color: #FFF;
+  }
+
+  &.guessed {
+    background-color: rgba(0, 0, 0, 0.47);
+
+    &.correct-letter {
+      background-color: var(--yellow);
+    }
+
+    &.correct-space {
+      background-color: var(--green);
+    }
+  }
+
+  &.filled {
+    border-width: 3px;
+  }
+
+}
