@@ -1,0 +1,22 @@
+@if (games$ | async; as games) {
+<div class="scoreboard">
+  <h3 class="scoreboard-title">HIGH SCORES</h3>
+  <div class="scoreboard-body">
+    <div class="scoreboard-row row-header">
+      <div class="scoreboard-cell cell-header cell-empty"></div>
+      <div class="scoreboard-cell cell-header">Naam</div>
+      <div class="scoreboard-cell cell-header">Time</div>
+    </div>
+
+    @for (game of games; track game.id) {
+    <div class="scoreboard-row row-body">
+      <div class="scoreboard-cell cell-count">{{ $index + 1 }}</div>
+      <div class="scoreboard-cell cell-body">{{ game.user.name }}</div>
+      <div class="scoreboard-cell cell-body" [title]="game.word">
+        {{ game.timeSpent | dateValues }} ({{ game.guesses }})
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}

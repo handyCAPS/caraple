@@ -1,0 +1,51 @@
+.scoreboard {
+  border: 1px solid var(--lightgrey);
+  border-radius: 5px;
+}
+
+.scoreboard-body {
+  // padding: 1em;
+}
+
+.scoreboard-title {
+  margin: 0;
+  text-align: center;
+  padding: 0.618em;
+}
+
+.scoreboard-row {
+  display: grid;
+  grid-template-columns: 2em repeat(auto-fill, minmax(6.5em, 1fr));
+  gap: 0.618em;
+  border-top: 1px solid var(--lightgrey);
+
+  &.row-body {
+    animation: highlightRow 2.6s ease-in-out 1;
+  }
+}
+
+.row-header {
+  font-weight: bold;
+}
+
+.scoreboard-cell {
+  padding: 0.34em 1em;
+}
+
+@keyframes highlightRow {
+  0% {
+    background-color: #fff;
+  }
+
+  50% {
+    background-color: var(--gold);
+  }
+
+  66% {
+    background-color: var(--gold);
+  }
+
+  100% {
+    background-color: #fff;
+  }
+}

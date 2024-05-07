@@ -30,8 +30,8 @@ describe('KeyboardService', () => {
 
   it('emits a value if a map is guessed', (done) => {
     const testMap: IKeyUseMap = {
-      a: true,
-      b: false,
+      a: 1,
+      b: 3,
     };
     service
       .getGuessMap()

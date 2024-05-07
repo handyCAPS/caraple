@@ -1,49 +1,15 @@
-@if (rows.length) {
 <div class="board" [ngClass]="{ invalid: invalidWord }">
-  @for (row of rows; track row.id; let i = $index) {
-  <div
-    class="row"
-    data-testid="row"
-    [ngClass]="{ current: currentRowIndex === i, checked: currentRowIndex > i }"
-  >
-    @for (letter of row.letters; track letter.id) {
-    <div
-      class="letter"
-      [ngClass]="{
-        filled: letter.letter.length > 0,
-        guessed: row.guessed,
-        'correct-letter': letter.correctLetter,
-        'correct-space': letter.correctSpace,
-      }"
-      role="img"
-      data-testid="letter"
-    >
-      {{ letter.letter }}
-    </div>
-    }
-  </div>
-  }
-</div>
-}
-<div class="submit">
-  @if (failedAll) {
-  <button type="button" class="button" (click)="reset()">Reset</button>
-  } @if (offerSubmit) {
-  <button
-    type="button"
-    data-testid="btn-submit"
-    class="button button-submit"
-    (click)="submitWord()"
-  >
-    Submit
-  </button>
+  @for (row of boardRows; track row.index; let i = $index) {
+  <app-board-row
+    [isCurrent]="row.active"
+    [isChecked]="row.index < i"
+    (rowGuessed)="rowGuessed(i, $event)"
+  ></app-board-row>
   }
 </div>
 
-@if(guessedCorrect) {
-<div class="correct-word">You guessed correct! The word was</div>
-} @if (failedAll) {
-<div class="failed">You failed! The word was</div>
-} @if (guessedCorrect || failedAll) {
-<div class="word">{{ wordToGuess }}</div>
-}
+<div class="failed">
+  @if (failedAll) { You failed! The word was
+  <span class="word-to-guess">{{ wordToGuess }}</span>
+  }
+</div>

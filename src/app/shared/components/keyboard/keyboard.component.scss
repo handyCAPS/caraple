@@ -1,4 +1,4 @@
-$keygap: 0.33rem;
+$keygap: 0.4rem;
 $keyHeight: 3.25rem;
 $keyWidth: 2.861rem;
 $keyColor: #111;
@@ -32,9 +32,24 @@ $keyColor: #111;
   border-radius: 3px;
   cursor: pointer;
 
+  &:active {
+    position: relative;
+    top: 1px;
+    left: 1px;
+  }
+
+  &.guessed,
+  &.correct-letter,
+  &.correct {
+    color: #FFF;
+  }
+
   &.guessed {
     background-color: var(--darkgrey);
-    color: #FFF;
+  }
+
+  &.correct-letter {
+    background-color: var(--yellow);
   }
 
   &.correct {

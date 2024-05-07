@@ -7,6 +7,17 @@
   margin-bottom: 0.618em;
 }
 
+.main {
+  --columnCount: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--columnCount), 1fr);
+  gap: 1.618em;
+
+  @media screen and (max-width: 800px) {
+    --columnCount: 1;
+  }
+}
+
 .board {
   display: flex;
   justify-content: center;

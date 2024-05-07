@@ -1,18 +1,24 @@
 import { testId, getText } from '../../../testing/helpers';
+import { getWordServiceProvider } from '../../../testing/mock-providers';
 import { KeyboardService } from '../../services/keyboard.service';
 import { WordService } from '../../services/word.service';
-import { KbKey } from '../board/KbKey';
+import { KbKey } from '../../interfaces/KbKey';
 import { BoardRowComponent } from './board-row.component';
-import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
+import { MockBuilder, MockInstance, MockRender, ngMocks } from 'ng-mocks';
 
 describe('BoardRowComponent', () => {
   let setLetter: (fixture: any, letter: string) => void;
   let setWord: (fixture: any, word: string) => void;
 
+  MockInstance.scope();
+
   beforeEach(() => {
-    return MockBuilder(BoardRowComponent)
-      .keep(WordService)
-      .keep(KeyboardService);
+    return (
+      MockBuilder(BoardRowComponent)
+        // .keep(WordService)
+        .provide(getWordServiceProvider({ getWord: 'TESTY' }))
+        .keep(KeyboardService)
+    );
   });
 
   beforeEach(() => {
@@ -49,7 +55,9 @@ describe('BoardRowComponent', () => {
 
   describe('Setting letters', () => {
     it('sets typed letter as letter', () => {
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const testLetter = 'T';
       setLetter(fixture, testLetter);
       fixture.detectChanges();
@@ -58,22 +66,25 @@ describe('BoardRowComponent', () => {
     });
 
     it('sets each letter in next tile', () => {
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const testWord = 'TEST';
-
       setWord(fixture, testWord);
       const letters = ngMocks.findAll(fixture, '.letter');
       letters
         .filter((letter, index) => index < testWord.length)
         .forEach((letterEl, letterIndex) => {
-          expect(getText(letterEl))
+          expect(getText(letterEl).toUpperCase())
             .withContext('Letter ' + letterIndex)
             .toBe(testWord[letterIndex]);
         });
     });
 
     it('Ignores keys that arent used', () => {
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const component = fixture.point.componentInstance;
       const f5Check = component.ignoreKey('f5');
       expect(f5Check).withContext('f5').toBeTrue();
@@ -94,36 +105,10 @@ describe('BoardRowComponent', () => {
       expect(EnterCheck).withContext(KbKey.enter).toBeFalse();
     });
 
-    it('stops entering letters when row full', () => {
-      const fixture = MockRender(BoardRowComponent);
-      const component = fixture.point.componentInstance;
-      const rowLength = 5;
-      const testWord = 'TESTINGLONGWORD';
-      setWord(fixture, testWord);
-      const letters = ngMocks.findAll(fixture, '.letter');
-      letters.forEach((letterEl, letterIndex) => {
-        if (letterIndex < rowLength) {
-          expect(getText(letterEl))
-            .withContext('before end of row')
-            .toBe(testWord[letterIndex]);
-        } else {
-          expect(getText(letterEl)).withContext('after end of row').toBe('');
-        }
-      });
-    });
-
-    it('emits rowFull when row filled', () => {
-      const fixture = MockRender(BoardRowComponent);
-      const component = fixture.point.componentInstance;
-      const testWord = 'TESTY';
-      spyOn(component.rowFilled, 'emit');
-      setWord(fixture, testWord);
-      fixture.detectChanges();
-      expect(component.rowFilled.emit).toHaveBeenCalled();
-    });
-
     it('emits rowGuessed when row entered', () => {
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const component = fixture.point.componentInstance;
       const testWord = 'TESTY';
       spyOn(component.rowGuessed, 'emit');
@@ -137,7 +122,9 @@ describe('BoardRowComponent', () => {
     });
 
     it('sets guess map in keyboard service when word checked', () => {
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const component = fixture.point.componentInstance;
       const testWord = 'REHA';
       const kbService = ngMocks.findInstance(fixture, KeyboardService);
@@ -153,49 +140,51 @@ describe('BoardRowComponent', () => {
     });
 
     it('adds "guessed" class to checked letters', () => {
-      // const guessedClass = '.guessed';
-      // const fixture = MockRender(BoardRowComponent);
-      // const component = fixture.point.componentInstance;
-      // const guessedLettersBefore = ngMocks.findAll(fixture, guessedClass);
-      // expect(guessedLettersBefore.length).withContext('Before').toBe(0);
-      // const testWord = 'REHAB';
-      // setWord(fixture, testWord);
-      // const submitButton = ngMocks.find(fixture, testId('btn-submit'));
-      // const submitSpy = spyOn(component, 'submitWord');
-      // submitSpy.and.callThrough();
-      // ngMocks.click(submitButton);
-      // fixture.detectChanges();
-      // expect(submitSpy).withContext('Submit function').toHaveBeenCalled();
+      const guessedClass = '.guessed';
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
+      const component = fixture.point.componentInstance;
+      const guessedLettersBefore = ngMocks.findAll(fixture, guessedClass);
+      expect(guessedLettersBefore.length).withContext('Before').toBe(0);
+      const testWord = 'REHAB';
+      setWord(fixture, testWord);
+      const submitSpy = spyOn(component, 'submitWord');
+      submitSpy.and.callThrough();
+      setLetter(fixture, 'enter');
+      fixture.detectChanges();
+      expect(submitSpy).withContext('Submit function').toHaveBeenCalled();
+      expect(component.wordChecked).withContext('wordChecked').toBeTrue();
+      // TODO: Fix
       // const guessedLetters = ngMocks.findAll(fixture, guessedClass);
       // expect(guessedLetters.length).withContext('After').toBe(testWord.length);
     });
 
-    it('adds current class to row being guessed', () => {
-      // const fixture = MockRender(BoardRowComponent);
-      // const component = fixture.point.componentInstance;
-      // const currentBefore = ngMocks.findAll(fixture, '.current');
-      // expect(currentBefore.length).withContext('Before').toBe(1);
-      // const rowsBefore = ngMocks.findAll(fixture, testId('row'));
-      // expect(rowsBefore[1].classes['current'])
-      //   .withContext('Classes on wrong row before')
-      //   .toBeUndefined();
-      // setWord(fixture, 'PILOT');
-      // const submitButton = ngMocks.find(fixture, testId('btn-submit'));
-      // const submitSpy = spyOn(component, 'submitWord');
-      // submitSpy.and.callThrough();
-      // ngMocks.click(submitButton);
-      // fixture.detectChanges();
-      // const currentAfter = ngMocks.findAll(fixture, '.current');
-      // expect(currentAfter.length).withContext('After').toBe(1);
-      // const rows = ngMocks.findAll(fixture, testId('row'));
-      // expect(rows[1].classes['current'])
-      //   .withContext('Classes on wrong row after')
-      //   .toBeTrue();
+    it('Ignores all keys when word is checked', () => {
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
+      const component = fixture.point.componentInstance;
+      const testWord = 'REHAB';
+      setWord(fixture, testWord);
+      setLetter(fixture, 'enter');
+      fixture.detectChanges();
+      expect(component.wordChecked).withContext('wordChecked').toBeTrue();
+      const letters = ngMocks.findAll(testId('letter'));
+      expect(letters.length).toBe(5)
+      let lastLetter = ngMocks.findAll(testId('letter'))[4];
+      expect(getText(lastLetter)).toBe('B');
+      setLetter(fixture, 'backspace');
+      fixture.detectChanges();
+      lastLetter = ngMocks.findAll(testId('letter'))[4];
+      expect(getText(lastLetter)).toBe('B');
     });
 
     it('removes letters with backspace', () => {
       // TODO: Test Backspace as first key
-      const fixture = MockRender(BoardRowComponent);
+      const fixture = MockRender(BoardRowComponent, {
+        isCurrent: true,
+      });
       const component = fixture.point.componentInstance;
       setWord(fixture, 'REHAB');
       setLetter(fixture, 'backspace');

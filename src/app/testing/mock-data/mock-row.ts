@@ -8,7 +8,6 @@ export function mockLetter(id: string, letter: string): ILetter {
 }
 
 export const mockRow: IRow = {
-  id: 'testid',
   letters: [
     mockLetter('1', 'r'),
     mockLetter('2', 'e'),
@@ -20,7 +19,6 @@ export const mockRow: IRow = {
 
 export function getMockRow(word: string): IRow {
   return {
-    id: 'testid',
     letters: [
       mockLetter('1', word[0] || ''),
       mockLetter('2', word[1] || ''),
@@ -28,5 +26,10 @@ export function getMockRow(word: string): IRow {
       mockLetter('4', word[3] || ''),
       mockLetter('5', word[4] || ''),
     ],
-  }
+  };
+}
+
+export function getMockRowArray(length: number, words?: string []): IRow[] {
+  const letters = words || [''];
+  return [...new Array(length)].map((l, idx) => getMockRow(letters[idx] ?? letters[0]));
 }

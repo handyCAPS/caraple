@@ -1,7 +1,7 @@
 import { IKeyUseMap, KeyboardComponent } from './keyboard.component';
 import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
 import { testId } from '../../../testing/helpers';
-import { KbKey } from '../board/KbKey';
+import { KbKey } from '../../interfaces/KbKey';
 import { KeyboardService } from '../../services/keyboard.service';
 
 describe('KeyboardComponent', () => {
@@ -77,13 +77,25 @@ describe('KeyboardComponent', () => {
       const component = fixture.point.componentInstance;
       const service = ngMocks.findInstance(KeyboardService);
       const testMap: IKeyUseMap = {
-        a: true,
-        b: false
+        a: 1,
+        b: 2,
       };
       service.setGuessMap(testMap);
       fixture.detectChanges();
       expect(component.keyGuesses['a']).toBeTrue();
       expect(component.keyGuesses['b']).toBeFalse();
+      expect(component.keyGuesses['z']).toBeUndefined();
+      const testMapSecond: IKeyUseMap = {
+        c: 3,
+        d: 1,
+      };
+      service.setGuessMap(testMapSecond);
+      fixture.detectChanges();
+      expect(component.keyGuesses['a']).toBeTrue();
+      expect(component.keyGuesses['b']).toBeFalse();
+      expect(component.keyGuesses['c']).toBeTrue();
+      expect(component.keyGuesses['d']).toBeFalse();
+      expect(component.keyGuesses['z']).toBeUndefined();
     });
   });
 });

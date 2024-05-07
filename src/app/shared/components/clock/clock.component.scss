@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clock {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 8em;
+  font-size: 1.7em;
+  font-weight: bold;
+  color: var(--darkgrey);
+  // text-shadow: 0 2px 1px rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+
+  &.started {
+    opacity: 1;
+  }
+}
+
+.clock-part {
+  $borderRadius: 6px;
+  border: 1px solid var(--darkgrey);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:first-of-type {
+    border-radius: $borderRadius 0 0 $borderRadius;
+  }
+
+  &:last-of-type {
+    border-radius: 0 $borderRadius $borderRadius 0;
+  }
+
+  &.milliseconds {
+    font-size: 0.8em;
+    align-items: flex-start;
+    padding-top: 2px;
+  }
+}

@@ -1,21 +1,30 @@
+@if (row) {
 <div
-    class="board-row"
-    data-testid="row"
-    [ngClass]="{ current: isCurrent(), checked: isChecked() }"
+  class="board-row"
+  data-testid="row"
+  [ngClass]="{
+    current: isCurrent(),
+    checked: isChecked(),
+    'word-correct': showHoorah,
+    invalid: !wordValid
+  }"
+>
+  @for (letter of row.letters; track letter.id) {
+  <div
+    class="letter"
+    [ngClass]="{
+      filled: letter.letter.length > 0,
+      guessed: wordChecked,
+      'correct-letter': letter.correctLetter,
+      'correct-space': letter.correctSpace,
+    }"
+    role="img"
+    data-testid="letter"
+    (animationend)="letterAnimation($event)"
   >
-    @for (letter of row.letters; track letter.id) {
-    <div
-      class="letter"
-      [ngClass]="{
-        filled: letter.letter.length > 0,
-        guessed: isGuessed(),
-        'correct-letter': letter.correctLetter,
-        'correct-space': letter.correctSpace,
-      }"
-      role="img"
-      data-testid="letter"
-    >
-      {{ letter.letter }}
-    </div>
-    }
+    {{ letter.letter }}
   </div>
+  }
+</div>
+
+}

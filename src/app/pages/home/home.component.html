@@ -1,9 +1,26 @@
 <div class="home-page">
   <h1 class="title">CARAPLE</h1>
-  <main class="board">
-    <app-board [keyStroke]="keyStroke"></app-board>
+  <main class="main">
+    <div class="sidebar sidebar-left">
+      <app-clock
+        class="clock"
+        [run]="runClock"
+        (afterTime)="setFinalTime($event)"
+      ></app-clock>
+    </div>
+    <div class="board">
+      <app-board
+        (started)="runClock = true; restart = false"
+        (finished)="runClock = false"
+        [restart]="restart"
+      ></app-board>
+    </div>
+    <app-scoreboard class="scoreboard"></app-scoreboard>
   </main>
   <div class="keyboard">
-    <app-keyboard (keyStroke)="keyStroke = $event"></app-keyboard>
+    <app-keyboard></app-keyboard>
+  </div>
+  <div class="restart">
+    <button class="restart-button" (click)="restart = true">RESTART</button>
   </div>
 </div>

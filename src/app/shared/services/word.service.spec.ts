@@ -6,11 +6,20 @@ import {
   IGuessedKey,
   IKeyUseMap,
 } from '../components/keyboard/keyboard.component';
+import { ILetter } from '../components/board/board.component';
 
 describe('WordService', () => {
   let service: WordService;
+  let isCorrect: {
+    letter: (letter: ILetter, key: string) => void;
+    space: (letter: ILetter, key: string) => void;
+  };
 
   beforeEach(() => {
+    isCorrect = {
+      letter: (letter: ILetter, key: string) => {},
+      space: (letter: ILetter, key: string) => {},
+    };
     TestBed.configureTestingModule({});
     service = TestBed.inject(WordService);
   });
@@ -65,6 +74,92 @@ describe('WordService', () => {
     expect(B.correctSpace).withContext('Incorrect correctSpace').toBeFalse();
   });
 
+  it('handles double letters', () => {
+    const testWord = 'ROOMS';
+    const testRow = getMockRow('BOOMS');
+    const testedRow = service.checkWord(testRow, testWord);
+    const { letters } = testedRow;
+    expect(letters[0].correctLetter).withContext('B correctLetter').toBeFalse();
+    expect(letters[0].correctSpace).withContext('B correctSpace').toBeFalse();
+    expect(letters[1].correctLetter).withContext('O correctLetter').toBeTrue();
+    expect(letters[1].correctSpace).withContext('O correctSpace').toBeTrue();
+
+    expect(letters[2].correctLetter)
+      .withContext('O (2) correctLetter')
+      .toBeTrue();
+    expect(letters[2].correctSpace)
+      .withContext('O (2) correctSpace')
+      .toBeTrue();
+
+    expect(letters[3].correctLetter).withContext('M correctLetter').toBeTrue();
+    expect(letters[3].correctSpace).withContext('M correctSpace').toBeTrue();
+
+    expect(letters[4].correctLetter).withContext('S correctLetter').toBeTrue();
+    expect(letters[4].correctSpace).withContext('S correctSpace').toBeTrue();
+  });
+
+  it('doesnt mark same letter twice', () => {
+    const correctWord = 'BOOMY';
+    const guessedRow = getMockRow('BOOBY');
+    const testedGuess = service.checkWord(guessedRow, correctWord);
+    const { letters } = testedGuess;
+    const [guessB, guessO, guessO2, guessB2, guessY] = letters;
+    expect(guessB.correctLetter).withContext('B correctLetter').toBeTrue();
+    expect(guessB.correctSpace).withContext('B correctSpace').toBeTrue();
+
+    expect(guessO.correctLetter).withContext('O correctLetter').toBeTrue();
+    expect(guessO.correctSpace).withContext('O correctSpace').toBeTrue();
+
+    expect(guessO2.correctLetter).withContext('O2 correctLetter').toBeTrue();
+    expect(guessO2.correctSpace).withContext('O2 correctSpace').toBeTrue();
+
+    expect(guessB2.correctLetter).withContext('B2 correctLetter').toBeFalse();
+    expect(guessB2.correctSpace).withContext('B2 correctSpace').toBeFalse();
+
+    expect(guessY.correctLetter).withContext('Y correctLetter').toBeTrue();
+    expect(guessY.correctSpace).withContext('Y correctSpace').toBeTrue();
+
+    const correctWordTwo = 'TENSE';
+    const guessedRowTwo = getMockRow('TEETS');
+    const testedGuessTwo = service.checkWord(guessedRowTwo, correctWordTwo);
+    const { letters: lettersTwo } = testedGuessTwo;
+    const [guessT, guessE, guessE2, guessT2, guessS] = lettersTwo;
+    expect(guessT.correctLetter).withContext('T correctLetter').toBeTrue();
+    expect(guessT.correctSpace).withContext('T correctSpace').toBeTrue();
+
+    expect(guessE.correctLetter).withContext('E correctLetter').toBeTrue();
+    expect(guessE.correctSpace).withContext('E correctSpace').toBeTrue();
+
+    expect(guessE2.correctLetter).withContext('E2 correctLetter').toBeTrue();
+    expect(guessE2.correctSpace).withContext('E2 correctSpace').toBeFalse();
+
+    expect(guessT2.correctLetter).withContext('T2 correctLetter').toBeFalse();
+    expect(guessT2.correctSpace).withContext('T2 correctSpace').toBeFalse();
+
+    expect(guessS.correctLetter).withContext('S correctLetter').toBeTrue();
+    expect(guessS.correctSpace).withContext('S correctSpace').toBeFalse();
+
+    const correctWordThree = 'FAUNA';
+    const guessedRowThree = getMockRow('CANNY');
+    const testedGuessThree = service.checkWord(guessedRowThree, correctWordThree);
+    const { letters: lettersThree } = testedGuessThree;
+    const [GuessC, guessA, guessN, guessN2, guessYy] = lettersThree;
+    expect(GuessC.correctLetter).withContext('C correctLetter').toBeFalse();
+    expect(GuessC.correctSpace).withContext('C correctSpace').toBeFalse();
+
+    expect(guessA.correctLetter).withContext('A correctLetter').toBeTrue();
+    expect(guessA.correctSpace).withContext('A correctSpace').toBeTrue();
+    // Correct letter, but later in correct space
+    expect(guessN.correctLetter).withContext('N correctLetter').toBeFalse();
+    expect(guessN.correctSpace).withContext('N correctSpace').toBeFalse();
+
+    expect(guessN2.correctLetter).withContext('N2 correctLetter').toBeTrue();
+    expect(guessN2.correctSpace).withContext('N2 correctSpace').toBeTrue();
+
+    expect(guessYy.correctLetter).withContext('Y correctLetter').toBeFalse();
+    expect(guessYy.correctSpace).withContext('Y correctSpace').toBeFalse();
+  });
+
   it('removes the last letter from a row', () => {
     const testRow = getMockRow('REHAB');
     const result = service.removeLastLetter(testRow);
@@ -101,13 +196,17 @@ describe('WordService', () => {
     mockRow.letters[4].correctLetter = true;
     mockRow.letters[4].correctSpace = true;
     const expected: IKeyUseMap = {
-      r: true,
-      e: true,
-      h: false,
-      a: false,
-      b: true,
+      r: 2,
+      e: 2,
+      h: 1,
+      a: 1,
+      b: 3,
     };
     const actual = service.rowToGuessMap(mockRow);
     expect(actual).toEqual(expected);
+  });
+
+  it('doesnt reset a previously guessed letter', () => {
+    pending();
   });
 });

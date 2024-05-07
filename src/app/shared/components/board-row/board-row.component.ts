@@ -5,11 +5,13 @@ import {
   Output,
   input,
 } from '@angular/core';
-import { ILetter, IRow } from '../board/board.component';
+import {  IRow } from '../board/board.component';
 import { WordService } from '../../services/word.service';
 import { NgClass } from '@angular/common';
-import { KbKey } from '../board/KbKey';
+import { KbKey } from '../../interfaces/KbKey';
 import { KeyboardService } from '../../services/keyboard.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-board-row',
@@ -21,33 +23,45 @@ import { KeyboardService } from '../../services/keyboard.service';
 export class BoardRowComponent {
   isCurrent = input<boolean>();
 
+  // TODO: Remove
   isChecked = input<boolean>();
-
+  // TODO: Remove
   isGuessed = input<boolean>();
 
   public row!: IRow;
 
   private rowLength!: number;
 
+  private rowFull: boolean = false;
+
   private wordToGuess: string = '';
 
-  private guessedWord: string = '';
-
-  private rowFull: boolean = false;
+  public guessedWord: string = '';
 
   public wordCorrect: boolean = false;
 
-  // TODO: Remove maybe only check if valid?
-  @Output() rowFilled = new EventEmitter<void>();
+  public wordValid: boolean = true;
+
+  public wordChecked: boolean = false;
+
+  private letterFlips: number = 0;
+
+  public showHoorah: boolean = false;
 
   /**
    * Emits with result of users guess after enter
    */
   @Output() rowGuessed = new EventEmitter<boolean>();
 
+  @Output() afterLetterFlip = new EventEmitter<void>();
+
   @HostListener('window:keydown', ['$event'])
   windowKeydown(event: KeyboardEvent) {
-    this.handleKeydown(event);
+    if (!this.isCurrent()) {
+      return;
+    }
+
+    this.handleKeydown(event.key);
   }
 
   constructor(
@@ -56,22 +70,40 @@ export class BoardRowComponent {
   ) {
     this.wordToGuess = this.wordService.getWord();
     this.rowLength = this.wordService.getWordLength();
-    this.row = this.wordService.getRows(1, this.rowLength)[0];
+    this.row = this.wordService.getRow(this.rowLength);
+    this.keyboardService
+      .keyStrokes()
+      .pipe(
+        takeUntilDestroyed(),
+        filter((_) => !!this.isCurrent())
+      )
+      .subscribe((key) => {
+        this.handleKeydown(key);
+      });
   }
 
-  submitWord() {
-    this.rowGuessed.emit(true);
+  public submitWord(): void {
+    this.wordValid = this.wordService.checkWordInList(this.guessedWord);
+    if (!this.wordValid) {
+      return;
+    }
+    this.row = this.wordService.checkWord(this.row);
+    this.wordChecked = true;
+    // Notify the game
+    this.wordCorrect = this.wordService.wordIsCorrect(this.guessedWord);
+  }
+
+  private emitValues() {
     // To color the keyboard
     const guessMap = this.wordService.rowToGuessMap(this.row);
     this.keyboardService.setGuessMap(guessMap);
-    // Notify the game
-    this.wordCorrect = this.guessedWord === this.wordToGuess;
+
+    this.afterLetterFlip.emit();
     this.rowGuessed.emit(this.wordCorrect);
   }
 
-  private handleKeydown(event: KeyboardEvent): void {
-    const { key } = event;
-    if (this.ignoreKey(key)) {
+  private handleKeydown(key: string): void {
+    if (this.ignoreKey(key) || this.wordChecked) {
       return;
     }
     if (key === KbKey.enter) {
@@ -83,6 +115,8 @@ export class BoardRowComponent {
       this.setLetter(key);
     }
     if (key === KbKey.backspace) {
+      this.wordValid = true;
+      this.rowFull = false;
       this.row = this.wordService.removeLastLetter(this.row);
     }
   }
@@ -101,9 +135,16 @@ export class BoardRowComponent {
       .join('')
       .trim();
     this.rowFull = this.guessedWord.length === this.rowLength;
+  }
 
-    if (this.rowFull) {
-      this.rowFilled.emit();
+  public letterAnimation(event: AnimationEvent): void {
+    if (!event.animationName.includes('letterFlip')) {
+      return;
+    }
+    this.letterFlips++;
+    if (this.letterFlips === this.guessedWord.length) {
+      this.showHoorah = this.wordCorrect;
+      this.emitValues();
     }
   }
 }

@@ -5,7 +5,7 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
-import { KbKey } from '../board/KbKey';
+import { KbKey } from '../../interfaces/KbKey';
 import { KeyboardService } from '../../services/keyboard.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
@@ -17,7 +17,7 @@ export interface IGuessedKey {
 }
 
 export interface IKeyUseMap {
-  [key: string]: boolean;
+  [key: string]: 1 | 2 | 3;
 }
 
 @Component({
@@ -36,9 +36,7 @@ export class KeyboardComponent {
 
   public keyBoardKey = KbKey;
 
-  public keyGuesses: IKeyUseMap = {
-    a: true
-  };
+  public keyGuesses: IKeyUseMap = {};
 
   public keys: string[][] = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -50,9 +48,9 @@ export class KeyboardComponent {
     this.keyboardService
       .getGuessMap()
       .pipe(takeUntilDestroyed())
-      .subscribe(map => {
-        this.keyGuesses = map;
-      })
+      .subscribe((map) => {
+        this.keyGuesses = { ...this.keyGuesses, ...map };
+      });
   }
 
   public stroke(key: string): void {

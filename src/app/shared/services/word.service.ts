@@ -19,6 +19,11 @@ export class WordService {
     this.wordToGuess = this.getRandomWord();
   }
 
+  public wordIsCorrect(guessWord: string): boolean {
+    console.log('guessedWord, this.wordToGuess', guessWord, this.wordToGuess);
+    return guessWord.toLowerCase() === this.wordToGuess;
+  }
+
   public getWordLength(): number {
     return this.wordLength;
   }
@@ -30,10 +35,19 @@ export class WordService {
       );
 
       return {
-        id: `row-${rowIndex}`,
         letters: letterArray,
-      } as IRow;
+      };
     });
+  }
+
+  public getRow(letterCount: number): IRow {
+    const letterArray = [...new Array(letterCount)].map((letter, letterIndex) =>
+      this.getLetter(letterIndex)
+    );
+
+    return {
+      letters: letterArray,
+    };
   }
 
   public getLetter(letterCount: number): ILetter {
@@ -63,16 +77,39 @@ export class WordService {
     return this.words.includes(word.toLowerCase());
   }
 
-  public checkWord(row: IRow, word: string): IRow {
-    const correctWord = row.letters.map((l) => l.letter).join('') === word;
+  public checkWord(row: IRow, word?: string): IRow {
+    const correct: {
+      space: string[];
+      letter: string[];
+    } = {
+      space: [],
+      letter: [],
+    };
+    const rowWord = row.letters
+      .map((l) => l.letter)
+      .join('')
+      .toLowerCase();
+    const wordToCheck = (word || this.wordToGuess).toLowerCase();
+    const correctWord = rowWord === wordToCheck;
     return {
       ...row,
       guessed: true,
       letters: row.letters.map((letter, index) => {
-        const l = letter.letter.toLowerCase();
-        const w = word.toLowerCase();
-        const correctLetter = w.includes(l);
-        const correctSpace = w.indexOf(l) === index;
+        const letterBeingChecked = letter.letter.toLowerCase();
+        const correctSpace = wordToCheck
+          .split('')
+          .some((checkLetter, checkIndex) => {
+            const correctSp =
+              checkLetter === letterBeingChecked && checkIndex === index;
+            correct.space.push(letterBeingChecked);
+            return correctSp;
+          });
+        const correctLetter =
+          wordToCheck.includes(letterBeingChecked) &&
+          correct.letter.indexOf(letterBeingChecked) === -1;
+        if (correctLetter) {
+          correct.letter.push(letterBeingChecked);
+        }
         return {
           ...letter,
           correctLetter,
@@ -117,11 +154,23 @@ export class WordService {
     };
   }
 
+  private letterToEnum(letter: ILetter): 1 | 2 | 3 {
+    // TODO: Make sure not to unset a letter
+    if (letter.correctSpace) {
+      return 3;
+    }
+    if (letter.correctLetter) {
+      return 2;
+    }
+
+    return 1;
+  }
+
   public rowToGuessMap(row: IRow): IKeyUseMap {
-    return row.letters.reduce((prev, curr) => {
+    return [...new Set(row.letters)].reduce((prev, curr) => {
       return {
         ...prev,
-        [curr.letter.toLowerCase()]: !!curr.correctLetter,
+        [curr.letter.toLowerCase()]: this.letterToEnum(curr),
       };
     }, {});
   }

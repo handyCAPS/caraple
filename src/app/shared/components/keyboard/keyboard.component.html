@@ -11,8 +11,9 @@
       [attr.data-key]="key"
       class="key key-{{ key }}"
       [ngClass]="{
-        guessed: keyGuesses[key] !== undefined,
-        correct: keyGuesses[key] === true,
+        guessed: keyGuesses[key] === 1,
+        'correct-letter': keyGuesses[key] === 2 ,
+        correct: keyGuesses[key] === 3,
       }"
       (click)="stroke(key)"
     >

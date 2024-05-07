@@ -2,11 +2,19 @@ $keygap: 0.33rem;
 $keyHeight: 3.25rem;
 $keyWidth: 3.25rem;
 $keyColor: #111;
+$flipDuration: 0.4s;
+$jumpDuration: 0.3s;
 
-.row {
+.board-row {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: var(--board-gap);
+  height: 100%;
+
+  &.invalid {
+    animation: shake 0.12s linear none 3;
+  }
 }
 
 .letter {
@@ -17,29 +25,223 @@ $keyColor: #111;
   pointer-events: none;
   background-color: #F2F2F2;
   font-weight: 700;
+  user-select: none;
 
   .current & {
     background-color: #fff;
   }
 
-  .checked & {
-    color: #FFF;
+  &.filled {
+    outline: 1px solid var(--darkgrey);
+    outline-width: 2px;
+    outline-offset: -1px;
+    transform: rotateX(0) scale(1);
+    background-color: #fff;
+    animation: borderBloop 0.23s ease-in-out none 1;
   }
 
   &.guessed {
-    background-color: rgba(0, 0, 0, 0.47);
+    background-color: #FFF;
+    // color: #FFF;
+    transform: rotateX(0);
+    transform-style: preserve-3d;
+    animation: letterFlip $flipDuration ease-in none 1;
+    animation-fill-mode: forwards !important;
+
+    &:nth-of-type(2) {
+      animation-delay: $flipDuration !important;
+    }
+
+    &:nth-of-type(3) {
+      animation-delay: $flipDuration * 2 !important;
+    }
+
+    &:nth-of-type(4) {
+      animation-delay: $flipDuration * 3 !important;
+    }
+
+    &:nth-of-type(5) {
+      animation-delay: $flipDuration * 4 !important;
+    }
 
     &.correct-letter {
-      background-color: var(--yellow);
+      background-color: #FFF;
+      animation: letterFlipYellow $flipDuration linear none 1;
+      animation-fill-mode: forwards;
     }
 
     &.correct-space {
-      background-color: var(--green);
+      background-color: #FFF;
+      animation: letterFlipGreen $flipDuration linear none 1;
+      animation-fill-mode: forwards;
     }
   }
 
-  &.filled {
-    border-width: 3px;
+}
+
+.word-correct .letter {
+  $ratio: 1.0125;
+  position: relative;
+  background-color: var(--green);
+  color: #FFF;
+  outline: none;
+  animation: hoorah $jumpDuration cubic-bezier(.4,.71,.57,.15) none 1;
+
+  &:nth-of-type(2) {
+    animation-delay: $jumpDuration * 0.33 !important;
   }
 
+  &:nth-of-type(3) {
+    animation-delay: $jumpDuration * 0.6 !important;
+  }
+
+  &:nth-of-type(4) {
+    animation-delay: $jumpDuration * 0.85 !important;
+  }
+
+  &:nth-of-type(5) {
+    animation-delay: $jumpDuration * 1.18 !important;
+  }
+}
+
+@keyframes borderBloop {
+  0% {
+    outline-width: 0px;
+    transform: scale(1);
+  }
+
+  38% {
+    outline-width: 3px;
+    transform: scale(1.05);
+  }
+
+  50% {
+    outline-width: 0px;
+    transform: scale(0.95);
+  }
+
+  70% {
+    outline-width: 3px;
+    transform: scale(1.05);
+  }
+
+  100% {
+    outline-width: 2px;
+    transform: scale(1);
+  }
+}
+
+@keyframes letterFlip {
+  0% {
+    transform: rotateX(0);
+    background-color: #FFF;
+    color: inherit;
+  }
+
+  50% {
+    transform: rotateX(90deg);
+    background-color: #FFF;
+    color: #FFF;
+  }
+
+  51% {
+    background-color: var(--darkgrey);
+  }
+
+  100% {
+    transform: rotateX(0);
+    background-color: var(--darkgrey);
+    color: #FFF;
+    outline-width: 0;
+  }
+}
+
+@keyframes letterFlipGreen {
+  0% {
+    background-color: #FFF;
+    transform: rotateX(0);
+  }
+
+  50% {
+    background-color: #FFF;
+    transform: rotateX(90deg);
+  }
+
+  51% {
+    background-color: var(--green);
+  }
+
+
+  100% {
+    background-color: var(--green);
+    color: #FFF;
+    transform: rotateX(0);
+    outline-width: 0;
+  }
+}
+
+@keyframes letterFlipYellow {
+  0% {
+    background-color: #FFF;
+    transform: rotateX(0);
+  }
+
+  50% {
+    background-color: #FFF;
+    transform: rotateX(90deg);
+  }
+
+  51% {
+    background-color: var(--yellow);
+  }
+
+
+  100% {
+    background-color: var(--yellow);
+    color: #FFF;
+    transform: rotateX(0);
+    outline-width: 0;
+  }
+}
+
+@keyframes hoorah {
+  0% {
+    position: relative;
+    top: 0;
+    z-index: 999;
+  }
+
+  33% {
+    top: -1.5em;
+  }
+
+  58% {
+    top: 0.5em;
+  }
+
+  79% {
+    top: -0.5em;
+  }
+
+  100% {
+    top: 0;
+  }
+}
+
+@keyframes shake {
+  0% {
+    left: 0;
+  }
+
+  33% {
+    left: 0.1em;
+  }
+
+  66% {
+    left: -0.1em;
+  }
+
+  100% {
+    left: 0;
+  }
 }
