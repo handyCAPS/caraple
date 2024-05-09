@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-line',
+  selector: 'cpx-line',
   standalone: true,
   imports: [],
   templateUrl: './line.component.html',

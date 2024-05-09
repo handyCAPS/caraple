@@ -14,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 
 @Component({
-  selector: 'app-board-row',
+  selector: 'cpx-board-row',
   standalone: true,
   imports: [NgClass],
   templateUrl: './board-row.component.html',

@@ -10,7 +10,7 @@ import { ClockService } from '../../shared/services/clock.service';
 import { ScoreboardComponent } from '../../shared/components/scoreboard/scoreboard.component';
 
 @Component({
-  selector: 'app-home',
+  selector: 'cpx-home',
   standalone: true,
   imports: [
     SharedModule,

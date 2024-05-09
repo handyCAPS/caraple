@@ -1,9 +1,9 @@
 <div class="board" [ngClass]="{ invalid: invalidWord }">
   @for (row of boardRows; track row.index; let i = $index) {
-  <app-board-row
+  <cpx-board-row
     [isCurrent]="row.active"
     (rowGuessed)="rowGuessed(i, $event)"
-  ></app-board-row>
+  ></cpx-board-row>
   }
 </div>
 

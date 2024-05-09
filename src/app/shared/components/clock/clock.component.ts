@@ -18,7 +18,7 @@ export interface IAfterDates {
 }
 
 @Component({
-  selector: 'app-clock',
+  selector: 'cpx-clock',
   standalone: true,
   imports: [NgClass, ZeropadPipe],
   templateUrl: './clock.component.html',

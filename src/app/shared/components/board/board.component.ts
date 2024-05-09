@@ -31,7 +31,7 @@ export interface IBoardRow {
 }
 
 @Component({
-  selector: 'app-board',
+  selector: 'cpx-board',
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
   standalone: true,

@@ -2,23 +2,23 @@
   <h1 class="title">CARAPLE</h1>
   <main class="main">
     <div class="sidebar sidebar-left">
-      <app-clock
+      <cpx-clock
         class="clock"
         [run]="runClock"
         (afterTime)="setFinalTime($event)"
-      ></app-clock>
+      ></cpx-clock>
     </div>
     <div class="board">
-      <app-board
+      <cpx-board
         (started)="runClock = true; restart = false"
         (finished)="runClock = false"
         [restart]="restart"
-      ></app-board>
+      ></cpx-board>
     </div>
-    <app-scoreboard class="scoreboard"></app-scoreboard>
+    <cpx-scoreboard class="scoreboard"></cpx-scoreboard>
   </main>
   <div class="keyboard">
-    <app-keyboard></app-keyboard>
+    <cpx-keyboard></cpx-keyboard>
   </div>
   <div class="restart">
     <button class="restart-button" (click)="restart = true">RESTART</button>

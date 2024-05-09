@@ -6,7 +6,7 @@ import { AsyncPipe, UpperCasePipe } from '@angular/common';
 import { DateValuesPipe } from '../../pipes/date-values.pipe';
 
 @Component({
-  selector: 'app-scoreboard',
+  selector: 'cpx-scoreboard',
   standalone: true,
   imports: [AsyncPipe, DateValuesPipe, UpperCasePipe],
   templateUrl: './scoreboard.component.html',

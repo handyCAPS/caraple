@@ -21,7 +21,7 @@ export interface IKeyUseMap {
 }
 
 @Component({
-  selector: 'app-keyboard',
+  selector: 'cpx-keyboard',
   standalone: true,
   imports: [JsonPipe, NgClass],
   templateUrl: './keyboard.component.html',
