@@ -2,7 +2,6 @@
   @for (row of boardRows; track row.index; let i = $index) {
   <app-board-row
     [isCurrent]="row.active"
-    [isChecked]="row.index < i"
     (rowGuessed)="rowGuessed(i, $event)"
   ></app-board-row>
   }

@@ -5,6 +5,7 @@ import {
   IGuessedKey,
   IKeyUseMap,
 } from '../components/keyboard/keyboard.component';
+import { countLetters } from '../helpers/helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -77,7 +78,7 @@ export class WordService {
     return this.words.includes(word.toLowerCase());
   }
 
-  public checkWord(row: IRow, word?: string): IRow {
+  public checkWord(row: IRow, wordToGuess?: string): IRow {
     const correct: {
       space: string[];
       letter: string[];
@@ -89,35 +90,71 @@ export class WordService {
       .map((l) => l.letter)
       .join('')
       .toLowerCase();
-    const wordToCheck = (word || this.wordToGuess).toLowerCase();
+    const wordToCheck = (wordToGuess || this.wordToGuess).toLowerCase();
     const correctWord = rowWord === wordToCheck;
     return {
       ...row,
       guessed: true,
-      letters: row.letters.map((letter, index) => {
-        const letterBeingChecked = letter.letter.toLowerCase();
-        const correctSpace = wordToCheck
-          .split('')
-          .some((checkLetter, checkIndex) => {
-            const correctSp =
-              checkLetter === letterBeingChecked && checkIndex === index;
-            correct.space.push(letterBeingChecked);
-            return correctSp;
-          });
-        const correctLetter =
-          wordToCheck.includes(letterBeingChecked) &&
-          correct.letter.indexOf(letterBeingChecked) === -1;
-        if (correctLetter) {
-          correct.letter.push(letterBeingChecked);
-        }
-        return {
-          ...letter,
-          correctLetter,
-          correctSpace,
-        };
-      }),
+      letters: this.getMappedLetters(row.letters, wordToCheck),
       correctWord,
     };
+  }
+
+  public getMappedLetters(
+    letters: ILetter[],
+    wordToCheckAgainst: string
+  ): ILetter[] {
+    const correct: { letters: string[]; spaces: string[] } = {
+      letters: [],
+      spaces: [],
+    };
+    return letters.map((letter, indexBeingChecked) => {
+      const letterBeingChecked = letter.letter.toLowerCase();
+      let correctSpace = false;
+      let correctLetter = false;
+      wordToCheckAgainst
+        .toLowerCase()
+        .split('')
+        .forEach((wordToCheckLetter: string, correctIndex: number) => {
+          let isSeenBefore: boolean = false;
+          if (wordToCheckLetter === letterBeingChecked) {
+            correctLetter = true;
+            if (correct.letters.includes(letterBeingChecked)) {
+              // Letter has been seen before
+              isSeenBefore = true;
+              const letterCount = countLetters(
+                letterBeingChecked,
+                wordToCheckAgainst
+              );
+              const seenBeforeCount = countLetters(
+                letterBeingChecked,
+                correct.letters
+              );
+              if (seenBeforeCount >= letterCount) {
+                correctLetter = false;
+              }
+
+            }
+            // If letter correct or correctSpace, check if letter appears again or before
+            // If appears again check if value is higher (space > letter)
+            if (indexBeingChecked === correctIndex) {
+              correctSpace = true;
+              correctLetter = true;
+            }
+          }
+        });
+      if (correctLetter) {
+        correct.letters.push(letterBeingChecked);
+      }
+      if (correctSpace) {
+        correct.spaces.push(letterBeingChecked);
+      }
+      return {
+        ...letter,
+        correctLetter,
+        correctSpace,
+      };
+    });
   }
 
   public removeLastLetter(row: IRow): IRow {
@@ -155,7 +192,6 @@ export class WordService {
   }
 
   private letterToEnum(letter: ILetter): 1 | 2 | 3 {
-    // TODO: Make sure not to unset a letter
     if (letter.correctSpace) {
       return 3;
     }
@@ -167,10 +203,31 @@ export class WordService {
   }
 
   public rowToGuessMap(row: IRow): IKeyUseMap {
-    return [...new Set(row.letters)].reduce((prev, curr) => {
+    // To prevent letters being overwritten
+    const setLetters: ILetter[] = [];
+    return row.letters.reduce((prev, curr) => {
+      const currLetter = curr.letter.toLowerCase();
+      const setLetter = setLetters.find(
+        (setletter) => setletter.letter.toLowerCase() === currLetter
+      );
+      if (setLetter) {
+        const setLetterStrength = this.letterToEnum(setLetter);
+        const currStrength = this.letterToEnum(curr);
+        console.log(
+          'setLetterStrength, currStrength',
+          setLetterStrength,
+          currStrength
+        );
+        if (setLetterStrength > currStrength) {
+          return {
+            ...prev,
+          };
+        }
+      }
+      setLetters.push(curr);
       return {
         ...prev,
-        [curr.letter.toLowerCase()]: this.letterToEnum(curr),
+        [currLetter]: this.letterToEnum(curr),
       };
     }, {});
   }

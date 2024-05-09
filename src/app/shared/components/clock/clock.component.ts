@@ -7,9 +7,10 @@ import {
   input,
 } from '@angular/core';
 import { ZeropadPipe } from '../../pipes/zeropad.pipe';
-import { Subject, interval, takeUntil } from 'rxjs';
+import { Subject, filter, interval, takeUntil } from 'rxjs';
 import { IDateValues, datesDiff } from '../../helpers/helpers';
 import { NgClass } from '@angular/common';
+import { GamesService } from '../../services/games.service';
 
 export interface IAfterDates {
   start: Date;
@@ -38,9 +39,23 @@ export class ClockComponent implements OnDestroy {
 
   private endDate?: Date;
 
+  public goldSilverBronze = {
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+  };
+
+  public isGold: boolean = true;
+  public isSilver: boolean = false;
+  public isBronze: boolean = false;
+
+  public isPastMax: boolean = false;
+
+  private lowHighScore?: number;
+
   private destroy$ = new Subject<boolean>();
 
-  constructor() {
+  constructor(private readonly gamesService: GamesService) {
     effect(() => {
       if (this.run()) {
         this.startInterval();
@@ -55,6 +70,7 @@ export class ClockComponent implements OnDestroy {
         }
       }
     });
+    this.getHighScore();
   }
 
   ngOnDestroy() {
@@ -69,8 +85,12 @@ export class ClockComponent implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.endDate = new Date();
+        const timeSpent = this.endDate.valueOf() - this.startDate.valueOf();
         const time = datesDiff(this.startDate, this.endDate);
         time.milliseconds = Math.round(time.milliseconds);
+        if (this.lowHighScore !== undefined) {
+          this.setTopTimes(timeSpent);
+        }
         this.time = time;
       });
   }
@@ -81,5 +101,38 @@ export class ClockComponent implements OnDestroy {
     if (!kill) {
       this.destroy$ = new Subject<boolean>();
     }
+  }
+
+  private getHighScore() {
+    this.gamesService
+      .subToGames()
+      .pipe(filter((games) => !!games))
+      .subscribe((highscores) => {
+        this.goldSilverBronze = {
+          gold: highscores![0].timeSpent,
+          silver: highscores![1].timeSpent,
+          bronze: highscores![2].timeSpent,
+        };
+        this.lowHighScore = highscores![highscores!.length - 1].timeSpent;
+      });
+  }
+
+  private setTopTimes(time: number): void {
+    if (this.isPastMax) {
+      return;
+    }
+    const { gold, silver, bronze } = this.goldSilverBronze;
+    if (time <= gold) {
+      this.isGold = true;
+      return;
+    }
+    this.isGold = false;
+    if (time <= silver) {
+      this.isSilver = true;
+      return;
+    }
+    this.isSilver = false;
+    this.isBronze = time <= bronze;
+    this.isPastMax = time > this.lowHighScore!;
   }
 }

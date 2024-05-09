@@ -5,7 +5,7 @@ import {
   Output,
   input,
 } from '@angular/core';
-import {  IRow } from '../board/board.component';
+import { IRow } from '../board/board.component';
 import { WordService } from '../../services/word.service';
 import { NgClass } from '@angular/common';
 import { KbKey } from '../../interfaces/KbKey';
@@ -22,11 +22,6 @@ import { filter } from 'rxjs';
 })
 export class BoardRowComponent {
   isCurrent = input<boolean>();
-
-  // TODO: Remove
-  isChecked = input<boolean>();
-  // TODO: Remove
-  isGuessed = input<boolean>();
 
   public row!: IRow;
 
@@ -68,6 +63,11 @@ export class BoardRowComponent {
     private readonly wordService: WordService,
     private readonly keyboardService: KeyboardService
   ) {
+    console.log('constructor board-row');
+    this.initAll();
+  }
+
+  private initAll() {
     this.wordToGuess = this.wordService.getWord();
     this.rowLength = this.wordService.getWordLength();
     this.row = this.wordService.getRow(this.rowLength);
@@ -142,7 +142,7 @@ export class BoardRowComponent {
       return;
     }
     this.letterFlips++;
-    if (this.letterFlips === this.guessedWord.length) {
+    if (this.letterFlips === this.row.letters.length) {
       this.showHoorah = this.wordCorrect;
       this.emitValues();
     }

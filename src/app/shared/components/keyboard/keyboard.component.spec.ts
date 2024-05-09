@@ -72,7 +72,7 @@ describe('KeyboardComponent', () => {
   });
 
   describe('Keystroke service', () => {
-    it('sets guessed keys', () => {
+    it('gives guessed keys 1, 2 or 3 value', () => {
       const fixture = MockRender(KeyboardComponent);
       const component = fixture.point.componentInstance;
       const service = ngMocks.findInstance(KeyboardService);
@@ -82,8 +82,8 @@ describe('KeyboardComponent', () => {
       };
       service.setGuessMap(testMap);
       fixture.detectChanges();
-      expect(component.keyGuesses['a']).toBeTrue();
-      expect(component.keyGuesses['b']).toBeFalse();
+      expect(component.keyGuesses['a']).toBe(testMap['a']);
+      expect(component.keyGuesses['b']).toBe(testMap['b']);
       expect(component.keyGuesses['z']).toBeUndefined();
       const testMapSecond: IKeyUseMap = {
         c: 3,
@@ -91,10 +91,10 @@ describe('KeyboardComponent', () => {
       };
       service.setGuessMap(testMapSecond);
       fixture.detectChanges();
-      expect(component.keyGuesses['a']).toBeTrue();
-      expect(component.keyGuesses['b']).toBeFalse();
-      expect(component.keyGuesses['c']).toBeTrue();
-      expect(component.keyGuesses['d']).toBeFalse();
+      expect(component.keyGuesses['a']).toBe(testMap['a']);
+      expect(component.keyGuesses['b']).toBe(testMap['b']);
+      expect(component.keyGuesses['c']).toBe(testMapSecond['c']);
+      expect(component.keyGuesses['d']).toBe(testMapSecond['d']);
       expect(component.keyGuesses['z']).toBeUndefined();
     });
   });

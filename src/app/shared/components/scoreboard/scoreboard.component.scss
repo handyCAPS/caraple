@@ -1,10 +1,10 @@
+@mixin highlighter($name: highlightRow) {
+  animation: $name 2.6s ease-in-out 1 !important;
+}
+
 .scoreboard {
   border: 1px solid var(--lightgrey);
   border-radius: 5px;
-}
-
-.scoreboard-body {
-  // padding: 1em;
 }
 
 .scoreboard-title {
@@ -20,7 +20,19 @@
   border-top: 1px solid var(--lightgrey);
 
   &.row-body {
-    animation: highlightRow 2.6s ease-in-out 1;
+    @include highlighter();
+
+    &.row-1 {
+      @include highlighter(gold);
+    }
+
+    &.row-2 {
+      @include highlighter(silver);
+    }
+
+    &.row-3 {
+      @include highlighter(bronze);
+    }
   }
 }
 
@@ -32,20 +44,29 @@
   padding: 0.34em 1em;
 }
 
-@keyframes highlightRow {
-  0% {
-    background-color: #fff;
-  }
+$colors: (
+  "gold": var(--gold),
+  "silver": var(--silver),
+  "bronze": var(--bronze),
+  "highlightRow": var(--yellow)
+);
 
-  50% {
-    background-color: var(--gold);
-  }
+@each $name, $color in $colors {
+  @keyframes #{$name} {
+    0% {
+      background-color: #fff;
+    }
 
-  66% {
-    background-color: var(--gold);
-  }
+    50% {
+      background-color: $color;
+    }
 
-  100% {
-    background-color: #fff;
+    66% {
+      background-color: $color;
+    }
+
+    100% {
+      background-color: #fff;
+    }
   }
 }

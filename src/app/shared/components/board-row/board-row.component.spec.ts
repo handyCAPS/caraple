@@ -5,10 +5,12 @@ import { WordService } from '../../services/word.service';
 import { KbKey } from '../../interfaces/KbKey';
 import { BoardRowComponent } from './board-row.component';
 import { MockBuilder, MockInstance, MockRender, ngMocks } from 'ng-mocks';
+import { NgClass } from '@angular/common';
 
 describe('BoardRowComponent', () => {
   let setLetter: (fixture: any, letter: string) => void;
   let setWord: (fixture: any, word: string) => void;
+  let flipLetters: (fixture: any, count: number) => void;
 
   MockInstance.scope();
 
@@ -18,6 +20,7 @@ describe('BoardRowComponent', () => {
         // .keep(WordService)
         .provide(getWordServiceProvider({ getWord: 'TESTY' }))
         .keep(KeyboardService)
+        .keep(NgClass)
     );
   });
 
@@ -32,6 +35,16 @@ describe('BoardRowComponent', () => {
       word.split('').forEach((letter) => {
         setLetter(fixture, letter);
         fixture.detectChanges();
+      });
+    };
+
+    flipLetters = (fixture: any, count: number): void => {
+      const letter = ngMocks.find(testId('letter'));
+      const animationEvent: Partial<AnimationEvent> = {
+        animationName: 'letterFlip',
+      };
+      [...new Array(count)].forEach((_) => {
+        ngMocks.trigger(letter, 'animationend', animationEvent);
       });
     };
   });
@@ -117,6 +130,7 @@ describe('BoardRowComponent', () => {
         .withContext('Too soon')
         .not.toHaveBeenCalled();
       setLetter(fixture, 'enter');
+      flipLetters(fixture, 5);
       fixture.detectChanges();
       expect(component.rowGuessed.emit).toHaveBeenCalledWith(true);
     });
@@ -125,7 +139,6 @@ describe('BoardRowComponent', () => {
       const fixture = MockRender(BoardRowComponent, {
         isCurrent: true,
       });
-      const component = fixture.point.componentInstance;
       const testWord = 'REHA';
       const kbService = ngMocks.findInstance(fixture, KeyboardService);
       spyOn(kbService, 'setGuessMap');
@@ -135,6 +148,7 @@ describe('BoardRowComponent', () => {
         .not.toHaveBeenCalled();
       setLetter(fixture, 'B');
       setLetter(fixture, 'enter');
+      flipLetters(fixture, 5);
       fixture.detectChanges();
       expect(kbService.setGuessMap).toHaveBeenCalled();
     });
@@ -155,9 +169,8 @@ describe('BoardRowComponent', () => {
       fixture.detectChanges();
       expect(submitSpy).withContext('Submit function').toHaveBeenCalled();
       expect(component.wordChecked).withContext('wordChecked').toBeTrue();
-      // TODO: Fix
-      // const guessedLetters = ngMocks.findAll(fixture, guessedClass);
-      // expect(guessedLetters.length).withContext('After').toBe(testWord.length);
+      const guessedLetters = ngMocks.findAll(fixture, guessedClass);
+      expect(guessedLetters.length).withContext('After').toBe(testWord.length);
     });
 
     it('Ignores all keys when word is checked', () => {
@@ -171,7 +184,7 @@ describe('BoardRowComponent', () => {
       fixture.detectChanges();
       expect(component.wordChecked).withContext('wordChecked').toBeTrue();
       const letters = ngMocks.findAll(testId('letter'));
-      expect(letters.length).toBe(5)
+      expect(letters.length).toBe(5);
       let lastLetter = ngMocks.findAll(testId('letter'))[4];
       expect(getText(lastLetter)).toBe('B');
       setLetter(fixture, 'backspace');

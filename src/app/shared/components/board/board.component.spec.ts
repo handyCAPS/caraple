@@ -1,11 +1,11 @@
 import { BoardComponent } from './board.component';
 import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
-import { SharedModule } from '../../shared.module';
 import { getText, testId } from '../../../testing/helpers';
 import { WordService } from '../../services/word.service';
 import { UniquePipe } from '../../pipes/unique.pipe';
 import { KeyboardService } from '../../services/keyboard.service';
 import { BoardRowComponent } from '../board-row/board-row.component';
+import { ClockService } from '../../services/clock.service';
 
 describe('BoardComponent', () => {
   let setLetter: (fixture: any, letter: string) => void;
@@ -30,6 +30,7 @@ describe('BoardComponent', () => {
     return MockBuilder(BoardComponent)
       .keep(WordService)
       .keep(KeyboardService)
+      .keep(ClockService)
       .keep(UniquePipe);
   });
 

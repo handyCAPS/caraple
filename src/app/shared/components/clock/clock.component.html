@@ -1,4 +1,13 @@
-<div class="clock" [ngClass]="{ started: time.milliseconds !== 0}">
+<div
+  class="clock"
+  [ngClass]="{
+    started: time.milliseconds !== 0,
+    'past-max': isPastMax,
+    gold: isGold,
+    silver: isSilver,
+    bronze: isBronze
+  }"
+>
   <div class="clock-part minutes">{{ time.minutes | zeropad }}</div>
   <div class="clock-part seconds">{{ time.seconds | zeropad }}</div>
   <div class="clock-part milliseconds">

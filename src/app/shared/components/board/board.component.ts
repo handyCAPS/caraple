@@ -83,8 +83,8 @@ export class BoardComponent {
   }
 
   public initAll(): void {
-    this.guessedCorrect = false;
     this.boardRows = this.getBoardRows(this.rowCount);
+    this.guessedCorrect = false;
     this.boardRows[0].active = true;
     this.failedAll = false;
     this.invalidWord = false;
@@ -127,6 +127,7 @@ export class BoardComponent {
   }
 
   private getBoardRows(count: number): IBoardRow[] {
+    console.log('Getting boardrows');
     return [...new Array(count)].map((n, index) => ({
       active: false,
       index,
@@ -138,13 +139,11 @@ export class BoardComponent {
     return {
       guesses: this.correctRowIndex + 1,
       date: new Date().valueOf(),
-      id: 'tempid',
       timeSpent: time ?? 0,
       word: word,
       user: {
         id: 'testId',
         dateAdded: new Date().valueOf(),
-        games: [],
         name: 'Tim',
       },
     };

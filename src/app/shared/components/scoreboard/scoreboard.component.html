@@ -9,10 +9,10 @@
     </div>
 
     @for (game of games; track game.id) {
-    <div class="scoreboard-row row-body">
+    <div class="scoreboard-row row-body row-{{ $index + 1 }}">
       <div class="scoreboard-cell cell-count">{{ $index + 1 }}</div>
       <div class="scoreboard-cell cell-body">{{ game.user.name }}</div>
-      <div class="scoreboard-cell cell-body" [title]="game.word">
+      <div class="scoreboard-cell cell-body" [title]="game.word | uppercase">
         {{ game.timeSpent | dateValues }} ({{ game.guesses }})
       </div>
     </div>

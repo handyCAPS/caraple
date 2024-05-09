@@ -18,6 +18,25 @@
   &.started {
     opacity: 1;
   }
+
+  &.gold {
+    background-color: var(--gold);
+    color: #FFF;
+  }
+
+  &.silver {
+    background-color: var(--silver);
+  }
+
+  &.bronze {
+    background-color: var(--bronze);
+    color: #FFF;
+  }
+
+  &.past-max {
+    background-color: var(--red);
+    color: #FFF;
+  }
 }
 
 .clock-part {
