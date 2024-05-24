@@ -8,6 +8,8 @@ import {
 } from '../../shared/components/clock/clock.component';
 import { ClockService } from '../../shared/services/clock.service';
 import { ScoreboardComponent } from '../../shared/components/scoreboard/scoreboard.component';
+import { GamesService } from '../../shared/services/games.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'cpx-home',
@@ -29,7 +31,12 @@ export class HomeComponent {
 
   public restart: boolean = false;
 
-  constructor(private readonly clockService: ClockService) {}
+  constructor(
+    private readonly clockService: ClockService,
+    private readonly gameService: GamesService
+  ) {
+    this.gameService.afterGame().pipe(take(1)).subscribe();
+  }
 
   public startTheClock() {
     if (!this.runClock) {
@@ -40,5 +47,10 @@ export class HomeComponent {
   public setFinalTime(dates: IAfterDates): void {
     this.finalTime = dates.end.valueOf() - dates.start.valueOf();
     this.clockService.setClockTime(this.finalTime);
+  }
+
+  public afterBoardGuessed(correct: boolean): void {
+    this.runClock = false;
+    // TODO: Check if clock should show top 10 finish
   }
 }

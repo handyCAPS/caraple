@@ -1,5 +1,11 @@
 $boardDim: 23rem;
 
+.title {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 0.618em;
+}
+
 .board {
   height: $boardDim;
   width: $boardDim * 0.8;
@@ -25,4 +31,53 @@ $boardDim: 23rem;
   font-size: 1.618em;
   font-weight: bold;
   margin-left: 0.5rem;
+}
+
+.message {
+  position: absolute;
+  top: 3em;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background-color: black;
+  color: white;
+  padding: 0.5em 0.75em;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.17), 0 0 12px rgba(0, 0, 0, 0.37);
+  font-size: 1.2em;
+  animation: showMessage 5s ease-out 1 forwards;
+}
+
+
+@keyframes showMessage {
+  0% {
+    top: -100%;
+    opacity: 0;
+  }
+
+  15% {
+    top: 5em;
+    opacity: 0.8;
+  }
+
+  18% {
+    top: 3em;
+  }
+
+  21%{
+    top: 3.5em;
+  }
+
+  24% {
+    top: 3em;
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

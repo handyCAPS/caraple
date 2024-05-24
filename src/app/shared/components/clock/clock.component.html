@@ -1,11 +1,11 @@
 <div
-  class="clock"
+  class="clock ranking-{{ ranking }}"
   [ngClass]="{
     started: time.milliseconds !== 0,
     'past-max': isPastMax,
     gold: isGold,
     silver: isSilver,
-    bronze: isBronze
+    bronze: isBronze,
   }"
 >
   <div class="clock-part minutes">{{ time.minutes | zeropad }}</div>
@@ -14,4 +14,8 @@
     {{ time.milliseconds | zeropad : 3 }}
   </div>
 </div>
-.
+@if (ranking && ranking < 11) {
+<div class="rank-prize">
+  <cpx-rank-prize [ranking]="ranking"></cpx-rank-prize>
+</div>
+}

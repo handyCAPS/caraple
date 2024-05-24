@@ -1,13 +1,28 @@
 @if (games$ | async; as games) {
 <div class="scoreboard">
-  <h3 class="scoreboard-title">HIGH SCORES</h3>
-  <div class="scoreboard-body">
-    <div class="scoreboard-row row-header">
-      <div class="scoreboard-cell cell-header cell-empty"></div>
-      <div class="scoreboard-cell cell-header">Naam</div>
-      <div class="scoreboard-cell cell-header">Time</div>
+  <header class="scoreboard-header">
+    <h3 class="scoreboard-title">HIGH SCORES</h3>
+    <div class="average">
+      <div class="average-title">Average time</div>
+      @if (averageTime !== null) {
+      <div class="average-time">
+        <div class="average-time-time">
+          {{ averageTime | dateValues }}
+          @if (trendingDown !== null) {
+          <div class="average-trends">
+            @if(trendingDown){
+            <div class="average-trend average-down">&darr;</div>
+            } @else {
+            <div class="average-trend average-up">&uarr;</div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      }
     </div>
-
+  </header>
+  <div class="scoreboard-body">
     @for (game of games; track game.id) {
     <div class="scoreboard-row row-body row-{{ $index + 1 }}">
       <div class="scoreboard-cell cell-count">{{ $index + 1 }}</div>

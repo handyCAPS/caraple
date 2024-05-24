@@ -3,7 +3,11 @@ $keyHeight: 3.25rem;
 $keyWidth: 3.25rem;
 $keyColor: #111;
 $flipDuration: 0.4s;
-$jumpDuration: 0.3s;
+$jumpDuration: 0.42s;
+
+@mixin flipAnimation($name) {
+  animation: $name $flipDuration ease-in none 1;
+}
 
 .board-row {
   position: relative;
@@ -42,37 +46,38 @@ $jumpDuration: 0.3s;
 
   &.guessed {
     background-color: #FFF;
-    // color: #FFF;
     transform: rotateX(0);
     transform-style: preserve-3d;
-    animation: letterFlip $flipDuration ease-in none 1;
+    @include flipAnimation(letterFlipStandard);
     animation-fill-mode: forwards !important;
 
     &:nth-of-type(2) {
-      animation-delay: $flipDuration !important;
+      animation-delay: $flipDuration * 0.9 !important;
     }
 
     &:nth-of-type(3) {
-      animation-delay: $flipDuration * 2 !important;
+      animation-delay: $flipDuration * 1.6 !important;
     }
 
     &:nth-of-type(4) {
-      animation-delay: $flipDuration * 3 !important;
+      animation-delay: $flipDuration * 2.2 !important;
     }
 
     &:nth-of-type(5) {
-      animation-delay: $flipDuration * 4 !important;
+      animation-delay: $flipDuration * 2.7 !important;
     }
 
     &.correct-letter {
       background-color: #FFF;
-      animation: letterFlipYellow $flipDuration linear none 1;
+      // animation: letterFlipYellow $flipDuration linear none 1;
+      @include flipAnimation(letterFlipYellow);
       animation-fill-mode: forwards;
     }
 
     &.correct-space {
       background-color: #FFF;
-      animation: letterFlipGreen $flipDuration linear none 1;
+      // animation: letterFlipGreen $flipDuration linear none 1;
+      @include flipAnimation(letterFlipGreen);
       animation-fill-mode: forwards;
     }
   }
@@ -85,7 +90,7 @@ $jumpDuration: 0.3s;
   background-color: var(--green);
   color: #FFF;
   outline: none;
-  animation: hoorah $jumpDuration cubic-bezier(.4,.71,.57,.15) none 1;
+  animation: hoorah $jumpDuration cubic-bezier(.4, .71, .57, .15) none 1;
 
   &:nth-of-type(2) {
     animation-delay: $jumpDuration * 0.33 !important;
@@ -212,11 +217,11 @@ $jumpDuration: 0.3s;
   }
 
   33% {
-    top: -1.5em;
+    top: -2em;
   }
 
   58% {
-    top: 0.5em;
+    top: 1em;
   }
 
   79% {
@@ -243,5 +248,37 @@ $jumpDuration: 0.3s;
 
   100% {
     left: 0;
+  }
+}
+
+// Component listens for animation starting with "letterFlip"
+$letterColors: (
+  "letterFlipStandard": var(--darkgrey),
+  "letterFlipGreen": var(--green),
+  "letterFlipYellow": var(--yellow)
+);
+
+@each $animationName, $color in $letterColors {
+  @keyframes #{$animationName} {
+    0% {
+      background-color: #FFF;
+      transform: rotateX(0);
+    }
+
+    50% {
+      background-color: #FFF;
+      transform: rotateX(90deg);
+    }
+
+    51% {
+      background-color: $color;
+    }
+
+    100% {
+      background-color: $color;
+      color: #FFF;
+      transform: rotateX(0);
+      outline-width: 0;
+    }
   }
 }

@@ -1,4 +1,4 @@
-@mixin highlighter($name: highlightRow) {
+@mixin highlighter($name) {
   animation: $name 2.6s ease-in-out 1 !important;
 }
 
@@ -7,10 +7,52 @@
   border-radius: 5px;
 }
 
+.scoreboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3em;
+}
+
 .scoreboard-title {
   margin: 0;
   text-align: center;
-  padding: 0.618em;
+  flex: 1;
+}
+
+.average {
+  position: relative;
+  text-align: center;
+  font-size: 0.9em;
+  flex: 1;
+}
+
+.average-time {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.average-time-time {
+  position: relative;
+}
+
+.average-trends {
+  position: absolute;
+  right: -0.618em;
+  top: -2px;
+}
+
+.average-trend {
+  position: absolute;
+}
+
+.average-up {
+  color: var(--red);
+}
+
+.average-down {
+  color: var(--green);
 }
 
 .scoreboard-row {
@@ -20,7 +62,7 @@
   border-top: 1px solid var(--lightgrey);
 
   &.row-body {
-    @include highlighter();
+    @include highlighter(highlightRow);
 
     &.row-1 {
       @include highlighter(gold);
@@ -34,10 +76,6 @@
       @include highlighter(bronze);
     }
   }
-}
-
-.row-header {
-  font-weight: bold;
 }
 
 .scoreboard-cell {

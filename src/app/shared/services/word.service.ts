@@ -133,13 +133,18 @@ export class WordService {
               if (seenBeforeCount >= letterCount) {
                 correctLetter = false;
               }
-
             }
             // If letter correct or correctSpace, check if letter appears again or before
             // If appears again check if value is higher (space > letter)
             if (indexBeingChecked === correctIndex) {
               correctSpace = true;
               correctLetter = true;
+              if (correct.letters.includes(letterBeingChecked)) {
+
+                if (correct.spaces.includes(wordToCheckLetter)) {
+                }
+              }
+              correct.spaces.push(wordToCheckLetter);
             }
           }
         });

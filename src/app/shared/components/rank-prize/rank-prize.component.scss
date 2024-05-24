@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.wreath {
+  width: 12em;
+  position: relative;
+
+  svg {
+    fill: var(--darkgrey);
+
+    &.gold {
+      fill: var(--gold);
+      color: var(--gold);
+    }
+
+    &.silver {
+      fill: var(--silver);
+      color: var(--silver);
+    }
+
+    &.bronze {
+      fill: var(--bronze);
+      color: var(--bronze);
+    }
+  }
+
+  &::after {
+    content: attr(data-ranking);
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    font-size: 5em;
+    color: var(--darkgrey);
+    transform: translate(-50%, -50%);
+  }
+
+  &.rank10::after {
+    font-size: 4.5em;
+  }
+}

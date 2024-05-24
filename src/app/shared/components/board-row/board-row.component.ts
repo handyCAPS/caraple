@@ -12,6 +12,7 @@ import { KbKey } from '../../interfaces/KbKey';
 import { KeyboardService } from '../../services/keyboard.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
+import { GamesService } from '../../services/games.service';
 
 @Component({
   selector: 'cpx-board-row',
@@ -61,9 +62,9 @@ export class BoardRowComponent {
 
   constructor(
     private readonly wordService: WordService,
-    private readonly keyboardService: KeyboardService
+    private readonly keyboardService: KeyboardService,
+    private readonly gameService: GamesService
   ) {
-    console.log('constructor board-row');
     this.initAll();
   }
 
@@ -100,6 +101,8 @@ export class BoardRowComponent {
 
     this.afterLetterFlip.emit();
     this.rowGuessed.emit(this.wordCorrect);
+
+    this.gameService.setAfterGame(this.wordChecked);
   }
 
   private handleKeydown(key: string): void {

@@ -1,5 +1,4 @@
 <div class="home-page">
-  <h1 class="title">CARAPLE</h1>
   <main class="main">
     <div class="sidebar sidebar-left">
       <cpx-clock
@@ -11,7 +10,7 @@
     <div class="board">
       <cpx-board
         (started)="runClock = true; restart = false"
-        (finished)="runClock = false"
+        (finished)="afterBoardGuessed($event)"
         [restart]="restart"
       ></cpx-board>
     </div>

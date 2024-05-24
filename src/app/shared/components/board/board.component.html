@@ -1,3 +1,9 @@
+<h1 class="title">CARAPLE</h1>
+
+@if (correctRowIndex !== -1) {
+<div class="message">{{ messages[correctRowIndex] }}!</div>
+}
+
 <div class="board" [ngClass]="{ invalid: invalidWord }">
   @for (row of boardRows; track row.index; let i = $index) {
   <cpx-board-row

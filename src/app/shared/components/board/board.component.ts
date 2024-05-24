@@ -46,7 +46,7 @@ export class BoardComponent {
 
   private rowCount: number = 6;
   public wordToGuess: string = '';
-  private correctRowIndex: number = 0;
+  public correctRowIndex: number = -1;
 
   public guessedCorrect: boolean = false;
   public invalidWord: boolean = false;
@@ -57,6 +57,15 @@ export class BoardComponent {
       active: true,
       index: 0,
     },
+  ];
+
+  public messages: string[] = [
+    'Incredible',
+    'Amazing',
+    'Not bad',
+    'Well done',
+    'Nervous',
+    'Phew',
   ];
 
   constructor(

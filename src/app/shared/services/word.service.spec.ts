@@ -81,7 +81,7 @@ describe('WordService', () => {
     expect(B.correctSpace).withContext('Incorrect correctSpace').toBeFalse();
   });
 
-  fdescribe('handling double letters', () => {
+  describe('handling double letters', () => {
     it('doesnt mark letter that was correctSpace earlier', () => {
       const correctWord = 'ROCKS';
       const guessRow = getMockRow('BOOMS');
@@ -111,9 +111,8 @@ describe('WordService', () => {
       const correctWord = 'TEMPO';
       const guessedRow = getMockRow('BOOTS');
       // const testedGuess = service.checkWord(guessedRow, correctWord);
-      const BOOTS2 = service.getMappedLetters(guessedRow.letters, correctWord);
-      // const { letters: BOOTS } = testedGuess;
-      const [letterB, letterO, letterO2, letterT, letterS] = BOOTS2;
+      const BOOTS = service.getMappedLetters(guessedRow.letters, correctWord);
+      const [letterB, letterO, letterO2, letterT, letterS] = BOOTS;
       expect(letterO.correctLetter).withContext('O correctLetter').toBeTrue();
       expect(letterO.correctSpace).withContext('O correctSpace').toBeFalse();
       expect(letterO2.correctLetter)
