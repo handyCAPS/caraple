@@ -15,7 +15,8 @@ describe('ScoreboardComponent', () => {
       imports: [ScoreboardComponent],
       providers: [
         MockProvider(GamesService, {
-          subToGames: () => of(mockGames)
+          subToTopGames: () => of(mockGames),
+          getStreak: () => of(1)
         })
       ]
     })

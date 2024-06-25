@@ -79,13 +79,6 @@ export class WordService {
   }
 
   public checkWord(row: IRow, wordToGuess?: string): IRow {
-    const correct: {
-      space: string[];
-      letter: string[];
-    } = {
-      space: [],
-      letter: [],
-    };
     const rowWord = row.letters
       .map((l) => l.letter)
       .join('')
@@ -100,64 +93,70 @@ export class WordService {
     };
   }
 
-  public getMappedLetters(
-    letters: ILetter[],
-    wordToCheckAgainst: string
-  ): ILetter[] {
+  public getMappedLetters(letters: ILetter[], cWord: string): ILetter[] {
     const correct: { letters: string[]; spaces: string[] } = {
       letters: [],
       spaces: [],
     };
+    const guessedWord = letters.map((l) => l.letter).join('');
     return letters.map((letter, indexBeingChecked) => {
-      const letterBeingChecked = letter.letter.toLowerCase();
-      let correctSpace = false;
-      let correctLetter = false;
-      wordToCheckAgainst
-        .toLowerCase()
+      const guessedLetter = letter.letter.toLowerCase();
+      let spaceIsCorrect = false;
+      let letterIsCorrect = false;
+      const correctWord = cWord.toLowerCase();
+      correctWord
         .split('')
-        .forEach((wordToCheckLetter: string, correctIndex: number) => {
+        .forEach((correctWordLetter: string, correctWordIndex: number) => {
           let isSeenBefore: boolean = false;
-          if (wordToCheckLetter === letterBeingChecked) {
-            correctLetter = true;
-            if (correct.letters.includes(letterBeingChecked)) {
+          if (correctWordLetter === guessedLetter) {
+            letterIsCorrect = true;
+            if (correct.letters.includes(guessedLetter)) {
               // Letter has been seen before
               isSeenBefore = true;
-              const letterCount = countLetters(
-                letterBeingChecked,
-                wordToCheckAgainst
-              );
+              const letterCount = countLetters(guessedLetter, correctWord);
               const seenBeforeCount = countLetters(
-                letterBeingChecked,
+                guessedLetter,
                 correct.letters
               );
               if (seenBeforeCount >= letterCount) {
-                correctLetter = false;
+                letterIsCorrect = false;
               }
             }
             // If letter correct or correctSpace, check if letter appears again or before
             // If appears again check if value is higher (space > letter)
-            if (indexBeingChecked === correctIndex) {
-              correctSpace = true;
-              correctLetter = true;
-              if (correct.letters.includes(letterBeingChecked)) {
-
-                if (correct.spaces.includes(wordToCheckLetter)) {
-                }
-              }
-              correct.spaces.push(wordToCheckLetter);
+            if (indexBeingChecked === correctWordIndex) {
+              spaceIsCorrect = true;
+              letterIsCorrect = true;
+              // if (correct.letters.includes(letterBeingChecked)) {
+              //   if (correct.spaces.includes(wordToCheckLetter)) {
+              //   }
+              // }
+              // correct.spaces.push(wordToCheckLetter);
+              // Get current position in correct word
+              // Search word from that position to find letter being checked
+              const nextIndexOfCurrentLtter = correctWord.indexOf(
+                guessedLetter,
+                indexBeingChecked + 1
+              );
+              // If that letter is in correct place, dont mark this letter
+              // if (
+              //   nextIndexOfCurrentLtter === guessedWord.indexOf(correctWordLetter)
+              // ) {
+              //   letterIsCorrect = false;
+              // }
             }
           }
         });
-      if (correctLetter) {
-        correct.letters.push(letterBeingChecked);
+      if (letterIsCorrect) {
+        correct.letters.push(guessedLetter);
       }
-      if (correctSpace) {
-        correct.spaces.push(letterBeingChecked);
+      if (spaceIsCorrect) {
+        correct.spaces.push(guessedLetter);
       }
       return {
         ...letter,
-        correctLetter,
-        correctSpace,
+        correctLetter: letterIsCorrect,
+        correctSpace: spaceIsCorrect,
       };
     });
   }

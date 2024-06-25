@@ -7,13 +7,21 @@
       @if (averageTime !== null) {
       <div class="average-time">
         <div class="average-time-time">
-          {{ averageTime | dateValues }}
+          {{ averageTime | timeString }}
           @if (trendingDown !== null) {
-          <div class="average-trends">
-            @if(trendingDown){
-            <div class="average-trend average-down">&darr;</div>
+          <div
+            class="average-trends"
+            [attr.data-avgdir]="trendingDown ? '-' : '+'"
+            [attr.data-avgdiff]="averageDiff! | timeString : true"
+          >
+            @if(!trendingDown){
+            <div class="average-trend average-down">
+              <cpx-arrow-wavy [styles]="arrowStyleDown"></cpx-arrow-wavy>
+            </div>
             } @else {
-            <div class="average-trend average-up">&uarr;</div>
+            <div class="average-trend average-up">
+              <cpx-arrow-wavy [styles]="arrowStyleUp"></cpx-arrow-wavy>
+            </div>
             }
           </div>
           }
@@ -28,7 +36,7 @@
       <div class="scoreboard-cell cell-count">{{ $index + 1 }}</div>
       <div class="scoreboard-cell cell-body">{{ game.user.name }}</div>
       <div class="scoreboard-cell cell-body" [title]="game.word | uppercase">
-        {{ game.timeSpent | dateValues }} ({{ game.guesses }})
+        {{ game.timeSpent | timeString }} ({{ game.guesses }})
       </div>
     </div>
     }

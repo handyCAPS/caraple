@@ -4,12 +4,13 @@ import { KeyboardComponent } from '../../shared/components/keyboard/keyboard.com
 import { BoardComponent } from '../../shared/components/board/board.component';
 import {
   ClockComponent,
-  IAfterDates,
 } from '../../shared/components/clock/clock.component';
+import { IAfterDates } from '../../shared/components/clock/interfaces/IAfterDates.interface';
 import { ClockService } from '../../shared/services/clock.service';
 import { ScoreboardComponent } from '../../shared/components/scoreboard/scoreboard.component';
 import { GamesService } from '../../shared/services/games.service';
 import { take } from 'rxjs';
+import { TimeGraphComponent } from '../../shared/components/time-graph/time-graph.component';
 
 @Component({
   selector: 'cpx-home',
@@ -20,6 +21,7 @@ import { take } from 'rxjs';
     BoardComponent,
     ScoreboardComponent,
     ClockComponent,
+    TimeGraphComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

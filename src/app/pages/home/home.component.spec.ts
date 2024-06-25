@@ -2,11 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home.component';
 import { ClockService } from '../../shared/services/clock.service';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockProvider } from 'ng-mocks';
 import { KeyboardComponent } from '../../shared/components/keyboard/keyboard.component';
 import { BoardComponent } from '../../shared/components/board/board.component';
 import { ClockComponent } from '../../shared/components/clock/clock.component';
 import { ScoreboardComponent } from '../../shared/components/scoreboard/scoreboard.component';
+import { GamesService } from '../../shared/services/games.service';
+import { of } from 'rxjs';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -28,6 +30,9 @@ describe('HomeComponent', () => {
           provide: ClockService,
           useValue: clockServiceSpy,
         },
+        MockProvider(GamesService, {
+          afterGame: () => of()
+        })
       ],
     }).compileComponents();
 

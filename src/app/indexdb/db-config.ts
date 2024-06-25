@@ -1,9 +1,9 @@
 import { DBConfig } from 'ngx-indexed-db';
-import { EDBKeys, EGamesDBKey } from './db-keys';
+import { EDBKeys, EGamesDBKey, EStreakDBKey } from './db-keys';
 
 export const dbConfig: DBConfig = {
   name: EDBKeys.db,
-  version: 2,
+  version: 3,
   objectStoresMeta: [
     {
       store: EDBKeys.games,
@@ -32,6 +32,22 @@ export const dbConfig: DBConfig = {
         {
           name: EGamesDBKey.user,
           keypath: EGamesDBKey.user,
+          options: { unique: false },
+        },
+      ],
+    },
+    {
+      store: EDBKeys.streak,
+      storeConfig: { keyPath: 'id', autoIncrement: true },
+      storeSchema: [
+        {
+          name: EStreakDBKey.user,
+          keypath: EStreakDBKey.user,
+          options: { unique: true },
+        },
+        {
+          name: EStreakDBKey.count,
+          keypath: EStreakDBKey.count,
           options: { unique: false },
         },
       ],

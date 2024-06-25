@@ -1,0 +1,23 @@
+<div class="time-chart">
+  <canvas
+    baseChart
+    [data]="lineChartData"
+    [options]="lineChartOptions"
+    [type]="'line'"
+    class="chart"
+  ></canvas>
+  <div class="options">
+    @for (option of chartTimeOptions; track $index) {
+    <div class="option">
+      <label [for]="'option' + $index">{{ option.label | uppercase }}</label>
+      <input
+        type="radio"
+        [name]="'option'"
+        [id]="'option' + $index"
+        [defaultChecked]="option.count === defaultChartLength"
+        (change)="setTimeOption(option.count)"
+      />
+    </div>
+    }
+  </div>
+</div>

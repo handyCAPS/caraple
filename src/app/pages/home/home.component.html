@@ -6,6 +6,7 @@
         [run]="runClock"
         (afterTime)="setFinalTime($event)"
       ></cpx-clock>
+      <cpx-time-graph></cpx-time-graph>
     </div>
     <div class="board">
       <cpx-board
@@ -20,6 +21,6 @@
     <cpx-keyboard></cpx-keyboard>
   </div>
   <div class="restart">
-    <button class="restart-button" (click)="restart = true">RESTART</button>
+    <!-- <button class="restart-button" (click)="restart = true">RESTART</button> -->
   </div>
 </div>

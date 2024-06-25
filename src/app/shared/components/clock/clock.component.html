@@ -2,7 +2,8 @@
   class="clock ranking-{{ ranking }}"
   [ngClass]="{
     started: time.milliseconds !== 0,
-    'past-max': isPastMax,
+    'past-max': isPastAverage,
+    'past-top': isPastTopScores,
     gold: isGold,
     silver: isSilver,
     bronze: isBronze,

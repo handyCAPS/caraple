@@ -8,15 +8,12 @@ import {
 } from '@angular/core';
 import { ZeropadPipe } from '../../pipes/zeropad.pipe';
 import { Subject, filter, interval, takeUntil } from 'rxjs';
-import { IDateValues, datesDiff } from '../../helpers/helpers';
+import { IDateValues, datesDiff, msToValues } from '../../helpers/helpers';
 import { NgClass } from '@angular/common';
 import { GamesService } from '../../services/games.service';
 import { RankPrizeComponent } from '../rank-prize/rank-prize.component';
-
-export interface IAfterDates {
-  start: Date;
-  end: Date;
-}
+import { IGoldSilverBronze } from './interfaces/goldsilverbronze.interface';
+import { IAfterDates } from './interfaces/IAfterDates.interface';
 
 @Component({
   selector: 'cpx-clock',
@@ -42,11 +39,7 @@ export class ClockComponent implements OnDestroy {
 
   public ranking: number | null = null;
 
-  public goldSilverBronze: {
-    gold: number | null;
-    silver: number | null;
-    bronze: number | null;
-  } = {
+  public goldSilverBronze: IGoldSilverBronze = {
     gold: null,
     silver: 0,
     bronze: 0,
@@ -58,9 +51,13 @@ export class ClockComponent implements OnDestroy {
 
   private topThreeSet: boolean = false;
 
-  public isPastMax: boolean = false;
+  public isPastTopScores: boolean = false;
 
-  private lowHighScore?: number;
+  private lowestTopScore: number = 0;
+
+  public isPastAverage: boolean = false;
+
+  private averageTime?: number;
 
   private destroy$ = new Subject<boolean>();
 
@@ -99,7 +96,7 @@ export class ClockComponent implements OnDestroy {
         const timeSpent = this.endDate.valueOf() - this.startDate.valueOf();
         const time = datesDiff(this.startDate, this.endDate);
         time.milliseconds = Math.round(time.milliseconds);
-        if (!this.topThreeSet && !this.isPastMax) {
+        if (!this.topThreeSet) {
           this.setTopTimes(timeSpent);
         }
         this.time = time;
@@ -114,19 +111,28 @@ export class ClockComponent implements OnDestroy {
     }
   }
 
+  /**
+   * Get a local copy af the top three game times and the average time
+   */
   private getHighScore() {
     this.gamesService
-      .subToGames()
-      .pipe(filter((games) => games !== null && games?.length > 0))
-      .subscribe((highscores) => {
+      .subToTopGames()
+      .pipe(
+        filter((games) => games !== null && games?.length > 0),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((topGames) => {
         this.goldSilverBronze = {
-          gold: highscores![0]?.timeSpent ?? 0,
-          silver: highscores![1]?.timeSpent ?? null,
-          bronze: highscores![2]?.timeSpent ?? null,
+          gold: topGames![0]?.timeSpent ?? 0,
+          silver: topGames![1]?.timeSpent ?? null,
+          bronze: topGames![2]?.timeSpent ?? null,
         };
-        const highscoreLength = highscores?.length || 0;
-        if (highscoreLength > 3) {
-          this.lowHighScore = highscores![highscores!.length - 1].timeSpent;
+        const highscoreLength = topGames?.length || 0;
+        if (topGames && highscoreLength > 3) {
+          this.averageTime = this.gamesService.getAverageTime(
+            this.gamesService.getGames()
+          );
+          this.lowestTopScore = topGames[topGames.length - 1].timeSpent;
         }
       });
   }
@@ -152,9 +158,10 @@ export class ClockComponent implements OnDestroy {
     }
     this.isSilver = false;
     this.isBronze = time <= bronze;
-    if (this.lowHighScore) {
-      if (time > this.lowHighScore) {
-        this.isPastMax = true;
+    if (this.averageTime) {
+      this.isPastTopScores = time > this.lowestTopScore;
+      if (time > this.averageTime) {
+        this.isPastAverage = true;
         this.topThreeSet = true;
       }
     } else {

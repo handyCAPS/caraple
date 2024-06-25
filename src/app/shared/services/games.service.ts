@@ -41,7 +41,7 @@ export class GamesService {
     this.gameSub.next(correct);
   }
 
-  public subToGames(
+  public subToTopGames(
     topLength: number = this.highScoreSize
   ): Observable<IGame[] | null> {
     if (this.games === null && !this.gettingGame) {
@@ -62,11 +62,21 @@ export class GamesService {
       );
   }
 
+  public subtoAllGames(sorted?: boolean): Observable<IGame[] | null> {
+    return this.gamesSub.asObservable().pipe(
+      map((games) => {
+        if (sorted) {
+          return this.getSortedGames(games!);
+        }
+        return games;
+      })
+    );
+  }
+
   public getTopGames(topLength: number, games?: IGame[]): IGame[] {
     const allGames = games ?? this.games ?? [];
-    allGames.sort((gameA, gameB) => gameA.timeSpent - gameB.timeSpent);
 
-    return allGames.slice(0, topLength);
+    return this.getSortedGames(allGames).slice(0, topLength);
   }
 
   public getAverageTime(games: IGame[]): number {
@@ -84,5 +94,19 @@ export class GamesService {
       (game) => game.timeSpent <= time
     );
     return gamesThatBeatTime.length + 1;
+  }
+
+  public getStreak(): Observable<number> {
+    return this.gamesDbService.getStreak();
+  }
+
+  public updateStreak(ended?: boolean): Observable<number> {
+    return this.gamesDbService.setStreak(ended);
+  }
+
+  private getSortedGames(games: IGame[]): IGame[] {
+    const sortable = [...games].map((game) => ({ ...game }));
+    sortable.sort((gameA, gameB) => gameA.timeSpent - gameB.timeSpent);
+    return sortable;
   }
 }

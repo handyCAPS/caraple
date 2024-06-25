@@ -4,6 +4,7 @@
   align-items: center;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
   gap: 5em;
 }
 
@@ -15,6 +16,7 @@
   font-weight: bold;
   color: var(--darkgrey);
   opacity: 0;
+  background-color: var(--lightestgrey);
   transition: opacity 0.5s ease-out;
 
   &.started {
@@ -23,7 +25,7 @@
 
   &.gold {
     background-color: var(--gold);
-    color: #FFF;
+    color: #fff;
   }
 
   &.silver {
@@ -32,18 +34,23 @@
 
   &.bronze {
     background-color: var(--bronze);
-    color: #FFF;
+    color: #fff;
+  }
+
+  &.past-top {
+    background-color: var(--green);
+    color: #fff;
   }
 
   &.past-max {
     background-color: var(--red);
-    color: #FFF;
+    color: #fff;
   }
 
   &.ranking-1,
   &.ranking-2,
   &.ranking-3 {
-    animation: blobBlob 1.2s cubic-bezier(.15, .65, .5, .88) 2!important;
+    animation: blobBlob 1.2s cubic-bezier(0.15, 0.65, 0.5, 0.88) 2 !important;
   }
 }
 
@@ -70,7 +77,7 @@
 }
 
 .rank-prize {
-  animation: grow 1.2s cubic-bezier(.08, .45, .45, 1) 1 forwards;
+  animation: grow 1.2s cubic-bezier(0.08, 0.45, 0.45, 1) 1 forwards;
 }
 
 @keyframes blobBlob {
