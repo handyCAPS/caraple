@@ -32,11 +32,11 @@ export class TimeGraphComponent {
   public chartTimeOptions: TChartTimeOption[] = [
     {
       label: 'last',
-      count: 100,
+      count: 50,
     },
     {
       label: 'last',
-      count: 400,
+      count: 200,
     },
     {
       label: 'all',
@@ -52,7 +52,7 @@ export class TimeGraphComponent {
     };
   });
 
-  public defaultChartLength: number = 100;
+  public defaultChartLength: number = 50;
 
   private chartLength: number = this.defaultChartLength;
 
@@ -75,15 +75,16 @@ export class TimeGraphComponent {
       ...this.lineChartData,
       ...this.gamesToChartPoints(games, this.chartLength),
     };
+    console.log('this.lineChartData', this.lineChartData.datasets[0].data.length);
   }
 
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [56000, 56400, 89500],
+        data: [],
       },
     ],
-    labels: [1, 2, 3, 4, 5],
+    labels: [],
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
